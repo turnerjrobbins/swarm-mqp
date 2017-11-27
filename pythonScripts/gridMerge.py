@@ -56,6 +56,36 @@ def translateDown(distance, target_array):
 		#print el
 	return d
 
+def translateRight(distance, target_array):
+	d = np.zeros(rows*cols).reshape(rows, cols)	#create an array of zeros
+	target_array = np.rot90(target_array)
+	array_flat = target_array.flatten()	#flatten the input array
+	for el in range(cols*distance, (rows*cols)):	#start on second row
+		np.put(d, el-cols*distance, array_flat[el])	#put all the elements up in the new array d
+		#print el
+	d = np.rot90(d)
+	d = np.rot90(d)
+	d = np.rot90(d)
+	return d
+
+def translateLeft(distance, target_array):
+	d = np.zeros(rows*cols).reshape(rows, cols)	#create an array of zeros
+	target_array = np.rot90(target_array)
+	target_array = np.rot90(target_array)
+	target_array = np.rot90(target_array)
+
+	array_flat = target_array.flatten()	#flatten the input array
+	for el in range(cols*distance, (rows*cols)):	#start on second row
+		np.put(d, el-cols*distance, array_flat[el])	#put all the elements up in the new array d
+		#print el
+	d = np.rot90(d)
+	# d = np.rot90(d)
+	# d = np.rot90(d)
+	return d
+
+
+
+
 print a
 print b
 print c
@@ -63,3 +93,4 @@ print scalarDelta(a,b)
 print translateUp(1, c)
 print translateDown(1, c)
 print translateRight(1, c)
+print translateLeft(2, c)
