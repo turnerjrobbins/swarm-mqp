@@ -41,11 +41,19 @@ def translateUpOne(array):
 		np.put(d, el-cols, array_flat[el])	#put all the elements up in the new array d
 	return d
 
-def translateUp(distance, array):
+def translateUp(distance, target_array):	#distance is given in cells
 	d = np.zeros(rows*cols).reshape(rows, cols)	#create an array of zeros
-	array_flat = array.flatten()	#flatten the input array
+	array_flat = target_array.flatten()	#flatten the input array
 	for el in range(cols*distance, (rows*cols)):	#start on second row
 		np.put(d, el-cols*distance, array_flat[el])	#put all the elements up in the new array d
+	return d
+
+def translateDown(distance, target_array):
+	d = np.zeros(rows*cols).reshape(rows, cols)	#create an array of zeros
+	array_flat = target_array.flatten()	#flatten the input array
+	for el in range((rows*cols - cols), -1, -1):
+		np.put(d, (el+cols*distance)-1, array_flat[el-1])
+		#print el
 	return d
 
 print a
@@ -53,4 +61,5 @@ print b
 print c
 print scalarDelta(a,b)
 print translateUp(1, c)
-
+print translateDown(1, c)
+print translateRight(1, c)
