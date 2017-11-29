@@ -6,8 +6,8 @@ import math
 from scipy import misc
 import matplotlib.pyplot as plt
 
-rows = 5
-cols = 5
+rows = 20
+cols = 20
 
 #########-------TEST ARRAYS------#######
 a = np.array([[1,0,0,0,0],
@@ -27,6 +27,27 @@ c = np.array([[0,0,0,0,0],
 			  [0,1,2,999,0],
 			  [0,0,1,0,0],
 			  [0,0,0,0,0]])
+
+d = np.array([[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]])
 
 class Transformation:
 	
@@ -101,8 +122,8 @@ def rotateCCW(angle, target_array, centerx, centery):	#use increments of 10 degr
 			target_array = np.rot90(target_array)
 		angle = angle - 90*int(angle/90)
 	angle = angle*-1
-	for row in range(rows+1):
-		for col in range(cols+1):
+	for row in range(rows):
+		for col in range(cols):
 			newx = np.cos(math.radians(angle))*(col-centerx)-np.sin(math.radians(angle))*(row-centery)+centerx#col	
 			newy = np.sin(math.radians(angle))*(col-centerx)+np.cos(math.radians(angle))*(row-centery)+centery#row
 			roundedx = int(round(newx))
@@ -127,8 +148,8 @@ def rotateCW(angle, target_array, centerx, centery):	#use increments of 10 degre
 			target_array = np.rot90(target_array)
 		angle = angle - 90*int(angle/90)
 	angle = angle*1
-	for row in range(rows+1):
-		for col in range(cols+1):
+	for row in range(rows):
+		for col in range(cols):
 			newx = np.cos(math.radians(angle))*(col-centerx)-np.sin(math.radians(angle))*(row-centery)+centerx#col	
 			newy = np.sin(math.radians(angle))*(col-centerx)+np.cos(math.radians(angle))*(row-centery)+centery#row
 			roundedx = int(round(newx))
@@ -141,9 +162,10 @@ def rotateCW(angle, target_array, centerx, centery):	#use increments of 10 degre
 #print b
 #print c
 #print simpleDelta(translateLeft(1, translateUp(1,a)),b)
-print translateUp(1, c)
-print translateDown(1, c)
-print translateRight(1, c)
-print translateLeft(1, c)
-print rotateCCW(200,c,2,2)
-print rotateCW(90,c,2,2)
+# print translateUp(1, c)
+# print translateDown(1, c)
+# print translateRight(1, c)
+# print translateLeft(1, c)
+#print rotateCCW(200,c,2,2)
+print "break"
+print rotateCW(20,d,10,10)
