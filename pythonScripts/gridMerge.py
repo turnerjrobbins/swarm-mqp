@@ -120,6 +120,22 @@ def rotateCCW(angle, target_array, centerx, centery):	#use increments of 10 degr
 				new[int(round(newy)),int(round(newx))] = target_array[row,col]	#add check to see if in matrix
 	return new
 
+def rotateCW(angle, target_array, centerx, centery):	#use increments of 10 degrees
+	new = np.zeros(rows*cols).reshape(rows, cols)
+	if(angle>90):
+		for n in range(int(angle/90)):
+			target_array = np.rot90(target_array)
+		angle = angle - 90*int(angle/90)
+	angle = angle*1
+	for row in range(rows+1):
+		for col in range(cols+1):
+			newx = np.cos(math.radians(angle))*(col-centerx)-np.sin(math.radians(angle))*(row-centery)+centerx#col	
+			newy = np.sin(math.radians(angle))*(col-centerx)+np.cos(math.radians(angle))*(row-centery)+centery#row
+			roundedx = int(round(newx))
+			roundedy = int(round(newy))
+			if((0 <= roundedy < rows-1) and (0 <= roundedx < cols-1)):				
+				new[int(round(newy)),int(round(newx))] = target_array[row,col]	#add check to see if in matrix
+	return new
 
 #print a
 #print b
@@ -130,3 +146,4 @@ print translateDown(1, c)
 print translateRight(1, c)
 print translateLeft(1, c)
 print rotateCCW(200,c,2,2)
+print rotateCW(90,c,2,2)
