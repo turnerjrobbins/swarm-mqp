@@ -9,8 +9,9 @@ y1 = centers(1,2);
 y2 = centers(2,2);
 angle = atan(abs(y1-y2)/abs(x1-x2));
 midpt = [((x1-x2)/2)+x2, ((y1-y2)/2)+y2];
-rgb = insertShape(readimg,'Line', [x1,y1,x2,y2], 'Color', 'blue', 'LineWidth', 8);
-imshow(rgb);
-v = viscircles(centers, radii);
+imshow('testimg.png');
+v = viscircles(centers,radii);
+v2 = viscircles(midpt, 2);
+insertShape(greyed,'Line', 
 end
 
