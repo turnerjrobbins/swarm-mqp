@@ -6,8 +6,8 @@ import math
 from scipy import misc
 import matplotlib.pyplot as plt
 
-rows = 5
-cols = 5
+rows = 20
+cols = 20
 
 #########-------TEST ARRAYS------#######
 a = np.array([[1,0,0,0,0],
@@ -28,7 +28,8 @@ c = np.array([[0,0,0,0,0],
 			  [0,0,1,0,0],
 			  [0,0,0,0,0]])
 
-d = np.array([[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+d = np.array([[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -41,7 +42,6 @@ d = np.array([[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 			  [0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 			  [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 			  [0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0],
-			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -70,6 +70,8 @@ e = np.array([[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]])
 
+
+
 class Transformation:
 
 	def __init__(self, stillArray, transArray):
@@ -92,14 +94,28 @@ def createTransList(still, shake, radius):
 			#print(shooken)
 			transformation = Transformation(still,shooken)
 			simplelist.append(transformation)
+	print len(simplelist)
 	return simplelist
 
 def createRotList(still, shimmy, tilt):
 	simplelist = []
 	x = int(cols/2)
 	y = int(rows/2)
+
+	orig = Transformation(still, shimmy)
+	simplelist.append(orig)
+
 	for m in range(tilt):
-		shimmied = rotateCCW(tilt*10)
+		shimmied = rotateCCW(tilt*10, shimmy, x, y)
+		transformation = Transformation(still, shimmied)
+		simplelist.append(transformation)
+
+	for m in range(tilt):
+		shimmied = rotateCW(tilt*10, shimmy, x, y)
+		transformation = Transformation(still, shimmied)
+		simplelist.append(transformation)
+	print len(simplelist)
+	return simplelist
 
 
 def simpleDelta(matrix1, matrix2):	#simple similarity function that returns the absolute scalar differences between cell values
@@ -222,16 +238,27 @@ def findOptTranslation(listoftranslations):
 	print "best array"
 	print best.transArray
 
+def findOptRotation(listoftranslations):
+	optimized_list = sorted(listoftranslations, key = lambda transformation: transformation.delta)
+	best = optimized_list[0]
+	print best.delta
+	print "best array"
+	print best.transArray
 
-transList = createTransList(c,c,5)
-print "length"
-print len(transList)
+# def shimmyShake(matrix1, matrix2, sensitivity):
+	
+# 	while(sensitivity)
+
+f = rotateCW(45, e, 10,10)
+
+transList = createTransList(d,f,10)
+rotList = createRotList(d,f,5)
 print findOptTranslation(transList)
-print "transformations created"
+print findOptRotation(rotList)
 
 plt.figure(figsize=(6,3.2))
-plt.imshow(c)
+plt.imshow(d)
 plt.figure(figsize=(6,3.2))
-plt.imshow(c)
+plt.imshow(f)
 plt.colorbar(orientation='vertical')
 plt.show()
