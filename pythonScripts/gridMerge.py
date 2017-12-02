@@ -94,7 +94,7 @@ def createTransList(still, shake, radius):
 			#print(shooken)
 			transformation = Transformation(still,shooken)
 			simplelist.append(transformation)
-	print len(simplelist)
+	#print len(simplelist)
 	return simplelist
 
 def createRotList(still, shimmy, tilt):
@@ -114,7 +114,7 @@ def createRotList(still, shimmy, tilt):
 		shimmied = rotateCW(tilt*10, shimmy, x, y)
 		transformation = Transformation(still, shimmied)
 		simplelist.append(transformation)
-	print len(simplelist)
+	#print len(simplelist)
 	return simplelist
 
 
@@ -234,31 +234,66 @@ def rotateCW(angle, target_array, centerx, centery):	#use increments of 10 degre
 def findOptTranslation(listoftranslations):
 	optimized_list = sorted(listoftranslations, key = lambda transformation: transformation.delta)
 	best = optimized_list[0]
-	print best.delta
-	print "best array"
-	print best.transArray
+	#print best.delta
+	#print "best array"
+	#print best.transArray
+	return best
 
 def findOptRotation(listoftranslations):
 	optimized_list = sorted(listoftranslations, key = lambda transformation: transformation.delta)
 	best = optimized_list[0]
-	print best.delta
-	print "best array"
-	print best.transArray
+	#print best.delta
+	#print "best array"
+	#print best.transArray
+	return best
 
-# def shimmyShake(matrix1, matrix2, sensitivity):
-	
-# 	while(sensitivity)
+def shimmyShake(matrix1, matrix2, sensitivity):
 
-f = rotateCW(45, e, 10,10)
+	radius = 10#sensitivity * cols/2
+	listoftranslations = createTransList(matrix1, matrix2, radius)
+	transResult = findOptTranslation(listoftranslations)
 
-transList = createTransList(d,f,10)
-rotList = createRotList(d,f,5)
-print findOptTranslation(transList)
-print findOptRotation(rotList)
+	tilt = 5#sensitivity * 36
+	listofrotations = createRotList(matrix1, transResult.transArray, tilt)
+	finalResult = findOptRotation(listofrotations)
+	#print "ere ya go"
+	return finalResult
+
+def actuator(fixed, flux, sensitivity):
+
+	var = flux
+
+	while(simpleDelta(fixed, var) > 14):
+
+		print simpleDelta(fixed, var)
+		var = shimmyShake(fixed, var, 1).transArray
+		print "did it"
+
+
+
+f = generalTranslateX(3,(rotateCW(45, e, 10,10)))
+
+# transList = createTransList(d,f,10)
+#rotList = createRotList(d,f,5)
+
+ssresult = shimmyShake(d,e,1)
+#print ssresult.transArray
+dispArr = ssresult.transArray
+
+#transformed = Transformation(d,e)
+#print transformed.delta
+#print transformed.transArray
+
+# while(simpleDelta(d,f) > 2):
+# 	shimmyShake
+
+actuator(d, f, 1)
 
 plt.figure(figsize=(6,3.2))
 plt.imshow(d)
 plt.figure(figsize=(6,3.2))
 plt.imshow(f)
+plt.figure(figsize=(6,3.2))
+plt.imshow(dispArr)
 plt.colorbar(orientation='vertical')
 plt.show()
