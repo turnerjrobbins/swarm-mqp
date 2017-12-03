@@ -9,7 +9,8 @@ add_library(occupancy_medium SHARED ${HEADERS} ${SOURCES})
 target_link_libraries(occupancy_medium
   argos3core_simulator)
 
-install(TARGETS occupancy_medium DESTINATION ${CMAKE_BINARY_DIR}/lib)
+#install(TARGETS occupancy_medium DESTINATION ${CMAKE_BINARY_DIR}/lib)
 
+install(TARGETS occupancy_medium DESTINATION /usr/local/lib/argos3)
 #FILE(RELATIVE_PATH relative_dir ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 #install(FILES ${HEADERS} DESTINATION "${CMAKE_BINARY_DIR}/include/${relative_dir}")
