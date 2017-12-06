@@ -1,2 +1,3 @@
 add_subdirectory(simulator)
 add_subdirectory(robots)
+add_subdirectory(controllers)
