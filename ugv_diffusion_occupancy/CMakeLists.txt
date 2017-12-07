@@ -64,6 +64,8 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include_directories(plugins/robots/generic/control_interface/)
+
 add_subdirectory(plugins)
 
 set(CMAKE_CXX_EXTENSIONS OFF)

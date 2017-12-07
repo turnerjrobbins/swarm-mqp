@@ -23,6 +23,8 @@
 /* Definition of proximity sensor */
 #include <argos3/plugins/robots/generic/control_interface/ci_proximity_sensor.h>
 
+#include <ci_occupancy_actuator.h>
+
 /*
  * All the ARGoS stuff in the 'argos' namespace.
  * With this statement, you save typing argos:: every time.
@@ -80,6 +82,9 @@ private:
    /* Pointer to the e-puck proximity sensor */
    CCI_ProximitySensor* m_pcProximity;
 
+   /* pointer to the occupancy actuator */
+   CCI_PheromoneActuator* m_pcOccupancy; //ignore the fact that I haven't even changed the class name.
+
    /*
     * The following variables are used as parameters for the
     * algorithm. You can set their value in the <parameters> section
@@ -88,7 +93,7 @@ private:
     */
    /* Wheel speed. */
    Real m_fWheelVelocity;
-
+   void do_wander();
 };
 
 #endif

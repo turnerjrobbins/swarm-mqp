@@ -3,6 +3,14 @@
 /* Function definitions for XML parsing */
 #include <argos3/core/utility/configuration/argos_configuration.h>
 
+#include <argos3/core/utility/logging/argos_log.h>
+
+#include <argos3/core/utility/math/vector2.h>
+#include <argos3/core/utility/math/angles.h>
+
+#include <cmath>
+
+
 /****************************************/
 /****************************************/
 
@@ -39,6 +47,7 @@ void CEPuckObstacleAvoidance::Init(TConfigurationNode& t_node) {
     */
    m_pcWheels    = GetActuator<CCI_DifferentialSteeringActuator>("differential_steering");
    m_pcProximity = GetSensor  <CCI_ProximitySensor             >("proximity"    );
+   m_pcOccupancy = GetActuator<CCI_PheromoneActuator           >("occupancy");
    /*
     * Parse the configuration file
     *
@@ -52,9 +61,30 @@ void CEPuckObstacleAvoidance::Init(TConfigurationNode& t_node) {
 /****************************************/
 /****************************************/
 
+
 void CEPuckObstacleAvoidance::ControlStep() {
-   /* Get the highest reading in front of the robot, which corresponds to the closest object */
-   Real fMaxReadVal = m_pcProximity->GetReadings()[0];
+  //0 is slightly to the left, 1 is slightly to the right
+  /* Get the highest reading in front of the robot, which corresponds to the closest object */
+  do_wander();
+  //check sensors in front of robot
+  if(m_pcProximity->GetReadings()[0] != 0.0f) {
+    //get actual value
+    Real fdistToObj = -std::log(m_pcProximity->GetReadings()[0]);
+    //create local vector from value
+    CRadians theta = CRadians();
+    theta.FromValueInDegrees(112.5);
+    //x real
+    CVector2 vect2ObjRelative = CVector2(fdistToObj, theta);
+    LOG << std::to_string(vect2ObjRelative.GetX()) + ", "
+        + std::to_string(vect2ObjRelative.GetY()) + "\n";
+  }
+}
+
+/****************************************/
+/****************************************/
+
+void CEPuckObstacleAvoidance::do_wander() {
+  Real fMaxReadVal = m_pcProximity->GetReadings()[0];
    UInt32 unMaxReadIdx = 0;
    if(fMaxReadVal < m_pcProximity->GetReadings()[1]) {
       fMaxReadVal = m_pcProximity->GetReadings()[1];
