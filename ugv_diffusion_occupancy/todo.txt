@@ -1,4 +1,17 @@
 initial experiment setup - DONE
 
 Modify the 'pheromone' functionality to update occupancy grid
- -make a hook function inside of the medium
+ -the SetOccupancy() function in occupancy_medium takes in a CVector2 position and needs to 
+ convert that to a cell, then set the occupancy for that cell (in the occupancy map).
+ -the actuator needs to call the SetOccupacy function with a position during update if some flag is set to true
+ -the controller needs to set the actuator flag to true if it detects a wall/obstacle and false if it sees nothing. 
+
+ Note: the actuator gets a reference to the CEntity it's attached to (see SetRobot function)
+so, how do we let the actuator know where to 'lay occupancy'?
+cormier uses m_pcEmbodiedEntity->GetOriginAnchor().Position to get the position of the robot, but we need the position + some offset. 
+
+Idea: the actuator holds a list of positions to send to the medium (like a buffer) that the controller can fill using some exposed function.
+Example: 
+	* controller sees an object at {2,2}
+	* controller calls actuator->objAtPosition({2,2}), which adds {2,2} to the actuator's list
+	* during actuator's update loop the actuator calls the occupancy_medium->SetOccupancy() function with each position in its list
