@@ -53,7 +53,7 @@ void CPheromoneActuator::Destroy(){
 /****************************************/
 
 REGISTER_ACTUATOR(CPheromoneActuator,
-                "pheromone", "default",
+                "occupancy", "default",
                 "Chris Cormier [ccormier@wpi.com]",
                 "0.1",
                 "A generic pheromone actuator.",

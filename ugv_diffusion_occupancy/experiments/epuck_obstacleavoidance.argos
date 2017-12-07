@@ -17,9 +17,11 @@
   <controllers>
 
     <epuck_obstacleavoidance_controller id="fdc"
-                                        library="build/controllers/epuck_obstacleavoidance/libepuck_obstacleavoidance.so">
+                                        library="libepuck_obstacleavoidance.so">
       <actuators>
         <differential_steering implementation="default" />
+        <occupancy implementation="default" 
+          medium="occupancy_medium"/>
       </actuators>
       <sensors>
         <proximity implementation="default" show_rays="true" />
@@ -47,6 +49,11 @@
       <body position="-2,0,0" orientation="0,0,0" />
     </box>
 
+    <e-puck id="ep_0">
+      <body position="0,0,0" orientation="0,0,0" />
+      <controller config="fdc"/>
+    </e-puck>
+
     <!--
         You can distribute entities randomly. Here, we distribute
         10 e-pucks in this way:
@@ -56,7 +63,7 @@
         from a gaussian distribution, whose mean is zero degrees and
         standard deviation is 360 degrees.
     -->
-    <distribute>
+    <!-- <distribute>
       <position method="uniform" min="-2,-2,0" max="2,2,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
       <entity quantity="50" max_trials="100">
@@ -64,7 +71,7 @@
           <controller config="fdc" />
         </e-puck>
       </entity>
-    </distribute>
+    </distribute> -->
 
     <!--
         We distribute 5 boxes uniformly in position and rotation around Z.
@@ -102,7 +109,9 @@
   <!-- ********* -->
   <!-- * Media * -->
   <!-- ********* -->
-  <media />
+  <media>
+    <occupancy_medium id="occupancy_medium" />
+  </media>
 
   <!-- ****************** -->
   <!-- * Visualization * -->

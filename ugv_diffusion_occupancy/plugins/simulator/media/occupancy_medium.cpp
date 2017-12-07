@@ -106,7 +106,7 @@ CPheromoneMedium::PheromoneMap CPheromoneMedium::ReadPheromone(const CVector2& c
 /****************************************/
 
 REGISTER_MEDIUM(CPheromoneMedium,
- "occupancy",
+ "occupancy_medium",
  "Turner Robbins [tjrobbns@wpi.edu]",
  "0.0",
  "Medium that manages an occupancy grid.",
