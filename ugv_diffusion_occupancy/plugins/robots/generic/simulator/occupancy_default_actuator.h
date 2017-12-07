@@ -9,7 +9,7 @@
 #include <argos3/core/simulator/entity/embodied_entity.h>
 #include <argos3/core/simulator/entity/composable_entity.h>
 #include "../control_interface/ci_occupancy_actuator.h"
-#include <ugv_diffusion_occupancy/plugins/simulator/media/occupancy_medium.h>
+#include <occupancy_medium.h>
 
 using namespace argos;
 

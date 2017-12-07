@@ -1,0 +1,4 @@
+initial experiment setup - DONE
+
+Modify the 'pheromone' functionality to update occupancy grid
+ -make a hook function inside of the medium
