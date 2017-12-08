@@ -70,8 +70,6 @@ e = np.array([[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 			  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]])
 
-
-
 class Transformation:
 
 	def __init__(self, stillArray, transArray):
@@ -114,9 +112,8 @@ def createRotList(still, shimmy, tilt):
 		shimmied = rotateCW(tilt*10, shimmy, x, y)
 		transformation = Transformation(still, shimmied)
 		simplelist.append(transformation)
-	#print len(simplelist)
+	print len(simplelist)
 	return simplelist
-
 
 def simpleDelta(matrix1, matrix2):	#simple similarity function that returns the absolute scalar differences between cell values
 	deltaMatrix = matrix1 - matrix2
@@ -156,7 +153,6 @@ def generalTranslateY(distance, target_array):
 	else:
 		new = translateDown(abs(distance),target_array)
 	return  new
-
 
 def translateRight(distance, target_array):
 	new= np.zeros(rows*cols).reshape(rows, cols)	#create an array of zeros
@@ -239,8 +235,8 @@ def findOptTranslation(listoftranslations):
 	#print best.transArray
 	return best
 
-def findOptRotation(listoftranslations):
-	optimized_list = sorted(listoftranslations, key = lambda transformation: transformation.delta)
+def findOptRotation(listofrotations):
+	optimized_list = sorted(listofrotations, key = lambda transformation: transformation.delta)
 	best = optimized_list[0]
 	#print best.delta
 	#print "best array"
@@ -249,51 +245,60 @@ def findOptRotation(listoftranslations):
 
 def shimmyShake(matrix1, matrix2, sensitivity):
 
-	radius = 10#sensitivity * cols/2
+	radius = 6#sensitivity * cols/2
 	listoftranslations = createTransList(matrix1, matrix2, radius)
 	transResult = findOptTranslation(listoftranslations)
 
-	tilt = 5#sensitivity * 36
+	tilt = 9#sensitivity * 36
 	listofrotations = createRotList(matrix1, transResult.transArray, tilt)
 	finalResult = findOptRotation(listofrotations)
-	#print "ere ya go"
-	return finalResult
+	return transResult
 
-def actuator(fixed, flux, sensitivity):
+def shake(matrix1, matrix2, sensitivity):
+	radius = 21
+	listoftranslations = createTransList(matrix1, matrix2, radius)
+	result = findOptRotation(listoftranslations)
 
+	return result
+
+def shimmy(matrix1, matrix2, sensitivity):
+	tilt = 1
+	listoftransformations = createRotList(matrix1, matrix2, tilt)
+	result = findOptRotation(listoftransformations)
+
+	for obj in listoftransformations:
+		#plt.figure(figsize=(6,3.2))
+		#plt.imshow(obj.transArray)
+		print obj.delta
+
+	return result
+
+def actuator(fixed, flux, targDelta):
 	var = flux
+	#while(simpleDelta(fixed, var) > targDelta):
 
-	while(simpleDelta(fixed, var) > 14):
+	# print simpleDelta(fixed, var)
+	# var = shake(fixed, var, 1).transArray
+	print simpleDelta(fixed, var)
+	var = shimmy(fixed, var, 2).transArray
+	# print simpleDelta(fixed, var)
+	# var = shake(fixed, var, 1).transArray
+	
+	print simpleDelta(fixed, var)
+	return var
 
-		print simpleDelta(fixed, var)
-		var = shimmyShake(fixed, var, 1).transArray
-		print "did it"
+f = generalTranslateY(6,(rotateCW(45, e, 10,10)))
+g = rotateCCW(10, e, 10, 10)
 
-
-
-f = generalTranslateX(3,(rotateCW(45, e, 10,10)))
-
-# transList = createTransList(d,f,10)
-#rotList = createRotList(d,f,5)
-
-ssresult = shimmyShake(d,e,1)
-#print ssresult.transArray
-dispArr = ssresult.transArray
-
-#transformed = Transformation(d,e)
-#print transformed.delta
-#print transformed.transArray
-
-# while(simpleDelta(d,f) > 2):
-# 	shimmyShake
-
-actuator(d, f, 1)
+stationary = d
+original = g #rotateCCW(10, generalTranslateY(6,generalTranslateX(6,e)),10,10)
+transformed = actuator(stationary, original, 13)
 
 plt.figure(figsize=(6,3.2))
 plt.imshow(d)
+# plt.figure(figsize=(6,3.2))
+# plt.imshow(original)
 plt.figure(figsize=(6,3.2))
-plt.imshow(f)
-plt.figure(figsize=(6,3.2))
-plt.imshow(dispArr)
+plt.imshow(transformed)
 plt.colorbar(orientation='vertical')
 plt.show()
