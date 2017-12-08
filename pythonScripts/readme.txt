@@ -18,4 +18,12 @@ translateUp is a generalized translation function for translating a target_array
 
 translateDown is a generalized translation function for translating target_array down a distance (gridcells)
 
+translateRight is a generalized translation function for translating target_array to the right a distance gridcells
+
+translateLeft is a generalized translation function for translating target_array to the left a distance gridcells
+
+generalTranslateY translates any target_array in either positive or negative y-direction a distance gridcells
+
+generalTranslateX translates any target_array in either positive or negative x-direction a distance gridcells
+
 
