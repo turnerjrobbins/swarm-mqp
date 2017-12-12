@@ -1,1 +1,2 @@
 add_subdirectory(epuck_obstacleavoidance)
+add_subdirectory(kheperaiv_occupancy)

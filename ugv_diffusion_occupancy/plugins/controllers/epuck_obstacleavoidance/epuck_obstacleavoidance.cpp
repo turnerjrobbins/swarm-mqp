@@ -48,6 +48,7 @@ void CEPuckObstacleAvoidance::Init(TConfigurationNode& t_node) {
    m_pcWheels    = GetActuator<CCI_DifferentialSteeringActuator>("differential_steering");
    m_pcProximity = GetSensor  <CCI_ProximitySensor             >("proximity"    );
    m_pcOccupancy = GetActuator<CCI_PheromoneActuator           >("occupancy");
+   m_pcPosition = GetSensor   <CCI_PositioningSensor           >("positioning");
    /*
     * Parse the configuration file
     *
@@ -68,13 +69,15 @@ void CEPuckObstacleAvoidance::ControlStep() {
   do_wander();
   //check sensors in front of robot
   if(m_pcProximity->GetReadings()[0] != 0.0f) {
-    //get actual value
     Real fdistToObj = -std::log(m_pcProximity->GetReadings()[0]);
-    //create local vector from value
+    //create local vector to occluding object
     CRadians theta = CRadians();
     theta.FromValueInDegrees(112.5);
-    //x real
     CVector2 vect2ObjRelative = CVector2(fdistToObj, theta);
+
+    //Determine global position of the object
+    CVector3 pcGlobalPos = m_pcPosition->GetReading().Position;
+    CQuaternion pcGlobalRot = m_pcPosition->GetReading().Orientation;
     LOG << std::to_string(vect2ObjRelative.GetX()) + ", "
         + std::to_string(vect2ObjRelative.GetY()) + "\n";
   }

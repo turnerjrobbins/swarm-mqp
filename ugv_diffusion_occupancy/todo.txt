@@ -15,3 +15,11 @@ Example:
 	* controller sees an object at {2,2}
 	* controller calls actuator->objAtPosition({2,2}), which adds {2,2} to the actuator's list
 	* during actuator's update loop the actuator calls the occupancy_medium->SetOccupancy() function with each position in its list
+
+
+
+Make KheperaIV controller w/ occupancy actuator 	DONE - 35 minutes
+Make kheperaIV experiment							DONE - 30 minutes
+Get it to run										DONE - 30 minutes (still need to either add a proximity sensor or make it use lidar for the diffusion)
+Update occupancy medium to keep track of occupancy
+update occupancy visualizer to show occupancy

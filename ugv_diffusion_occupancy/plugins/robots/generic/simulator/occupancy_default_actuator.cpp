@@ -32,7 +32,9 @@ void CPheromoneActuator::Init(TConfigurationNode& t_tree){
 /****************************************/
 
 void CPheromoneActuator::Update(){
-    
+    // if(bLayingPheromone)
+    //     m_pCPheromoneMedium->LayPheromone(m_pcEmbodiedEntity->GetOriginAnchor().Position,
+    //                                     m_unStrength);
 }
 
 /****************************************/

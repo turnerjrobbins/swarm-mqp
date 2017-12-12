@@ -1,7 +1,5 @@
-set(HEADERS_1
-	control_interface/ci_occupancy_actuator.h)
 
-set(HEADERS_2
+set(HEADERS
 	simulator/occupancy_default_actuator.h)
 
 set(SOURCES
