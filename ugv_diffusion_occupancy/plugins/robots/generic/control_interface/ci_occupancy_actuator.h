@@ -2,6 +2,7 @@
 #define CI_OCCUPANCY_ACTUATOR_H
 
 #include <argos3/core/control_interface/ci_actuator.h>
+#include <argos3/core/utility/logging/argos_log.h>
 
 using namespace argos;
 
@@ -26,7 +27,9 @@ public:
         return bLayingPheromone;
     }
 
-    inline void SetOccupancy(Real dist, Real angle){}
+    inline virtual void SetOccupancy(Real dist) {
+        LOGERR << "Using the cci set occupancy call" << std::endl;
+    }
 
     #ifdef ARGOS_WITH_LUA
         void CreateLuaState(lua_State* pt_lua_state) override;

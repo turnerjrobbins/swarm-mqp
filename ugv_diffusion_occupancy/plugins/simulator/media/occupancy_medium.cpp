@@ -63,6 +63,8 @@ void COccupancyMedium::Update(){
 void COccupancyMedium::SetOccupancy(const CVector2& c_position) {
     CVector2 cell_position = PositionToCellPosition(c_position);
     m_cPheromoneCells[cell_position] = 1;
+    LOG << "occupancy set at cell position: " + std::to_string(cell_position.GetX())
+         + ", " + std::to_string(cell_position.GetY()) + "\n"; 
 }
 
 /****************************************/

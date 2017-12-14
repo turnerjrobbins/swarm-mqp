@@ -22,6 +22,7 @@
         <occupancy implementation="default" medium="occupancy_medium"/>
       </actuators>
       <sensors>
+        <kheperaiv_proximity implementation="default" show_rays="false" />
         <kheperaiv_lidar implementation="default" show_rays="true" num_readings="11"/>
       </sensors>
       <params alpha="7.5" delta="0.1" velocity="5" />
@@ -59,7 +60,7 @@
     <distribute>
       <position method="uniform" min="-2,-2,0" max="2,2,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
-      <entity quantity="1" max_trials="100">
+      <entity quantity="5" max_trials="100">
         <kheperaiv id="khiv">
           <controller config="khivdc" />
         </kheperaiv>
@@ -104,7 +105,7 @@
   <!-- * Media * -->
   <!-- ********* -->
   <media>
-    <occupancy_medium id="occupancy_medium" />
+    <occupancy_medium id="occupancy_medium" library="build/lib/liboccupancy_medium.so" cell_size=".075"/>
   </media>
 
   <!-- ****************** -->

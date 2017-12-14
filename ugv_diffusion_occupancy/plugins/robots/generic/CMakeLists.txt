@@ -12,7 +12,8 @@ add_library(argos3plugin_simulator_generic_occupancy SHARED ${HEADERS} ${SOURCES
 
 target_link_libraries(argos3plugin_simulator_generic_occupancy
   argos3core_simulator
-  occupancy_medium)
+  occupancy_medium
+  )
 
 install(TARGETS argos3plugin_simulator_generic_occupancy DESTINATION ${CMAKE_BINARY_DIR}/lib)
 

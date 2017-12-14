@@ -2,11 +2,8 @@ add_library(epuck_obstacleavoidance SHARED epuck_obstacleavoidance.h epuck_obsta
 target_link_libraries(epuck_obstacleavoidance
   argos3core_simulator
   argos3plugin_simulator_epuck
-  argos3plugin_simulator_genericrobot)
-
-#what is this garbage? I honestly don't really know where these things are supposed to go :P
-#install(TARGETS epuck_obstacleavoidance DESTINATION ${CMAKE_BINARY_DIR}/lib)
-#install(TARGETS epuck_obstacleavoidance DESTINATION /usr/local/lib/argos3)
+  argos3plugin_simulator_genericrobot
+  argos3plugin_simulator_generic_occupancy)
 
 install(TARGETS epuck_obstacleavoidance DESTINATION ${CMAKE_BINARY_DIR}/lib)
 

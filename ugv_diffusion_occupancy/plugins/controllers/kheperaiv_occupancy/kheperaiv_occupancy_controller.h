@@ -8,6 +8,8 @@
 /* Definition of interface for occupancy actuator */
 #include <ci_occupancy_actuator.h>
 
+#include <argos3/plugins/robots/kheperaiv/control_interface/ci_kheperaiv_proximity_sensor.h>
+
 
 
 //DEFINITIONS
@@ -62,6 +64,8 @@ private:
 	CCI_DifferentialSteeringActuator* m_pcWheels;
 	/* pointer to the occupancy actuator */
 	CCI_OccupancyActuator* pcOccupancy;
+
+  CCI_KheperaIVProximitySensor* m_pcProximity;
 
 	 /*
     * The following variables are used as parameters for the

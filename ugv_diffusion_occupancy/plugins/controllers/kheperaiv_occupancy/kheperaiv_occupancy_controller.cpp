@@ -49,8 +49,9 @@ void CKheperaOccupancy::Init(TConfigurationNode& t_node) {
     * occurs.
     */
    m_pcWheels    = GetActuator<CCI_DifferentialSteeringActuator>("differential_steering");
-   pcLidarSensor = GetSensor  <CCI_KheperaIVLIDARSensor    >("kheperaiv_lidar"  );
-   pcOccupancy = GetActuator    <CCI_OccupancyActuator           >("occupancy");
+   pcLidarSensor = GetSensor  <CCI_KheperaIVLIDARSensor        >("kheperaiv_lidar"  );
+   pcOccupancy   = GetActuator<CCI_OccupancyActuator           >("occupancy");
+   m_pcProximity = GetSensor <CCI_KheperaIVProximitySensor >("kheperaiv_proximity" );
 
 
    /*
@@ -75,12 +76,43 @@ void CKheperaOccupancy::ControlStep() {
   Real dist = 0;
   if(lidar_readings.size() % 2 ==1) {
     dist =  lidar_readings[ceil(lidar_readings.size() / 2.0)];
-    LOG << dist << std::endl;
+    if((dist / .01) < .5) {
+      pcOccupancy->SetOccupancy(dist / 0.01);
+    }
+    
   }else {
     LOGERR << "No front-facing lidar reading, use an odd number of rays.\n";
     std::exit(1);
   }
-  // pcOccupancy->SetOccupancy(dist, 0.0);
+
+
+
+  /* Get readings from proximity sensor */
+   const CCI_KheperaIVProximitySensor::TReadings& tProxReads = m_pcProximity->GetReadings();
+   /* Sum them together */
+   CVector2 cAccumulator;
+   for(size_t i = 0; i < tProxReads.size(); ++i) {
+      cAccumulator += CVector2(tProxReads[i].Value, tProxReads[i].Angle);
+   }
+   cAccumulator /= tProxReads.size();
+   /* If the angle of the vector is small enough and the closest obstacle
+    * is far enough, continue going straight, otherwise curve a little
+    */
+   CRadians cAngle = cAccumulator.Angle();
+   if(m_cGoStraightAngleRange.WithinMinBoundIncludedMaxBoundIncluded(cAngle) &&
+      cAccumulator.Length() < m_fDelta ) {
+      /* Go straight */
+      m_pcWheels->SetLinearVelocity(m_fWheelVelocity, m_fWheelVelocity);
+   }
+   else {
+      /* Turn, depending on the sign of the angle */
+      if(cAngle.GetValue() > 0.0f) {
+         m_pcWheels->SetLinearVelocity(m_fWheelVelocity, 0.0f);
+      }
+      else {
+         m_pcWheels->SetLinearVelocity(0.0f, m_fWheelVelocity);
+      }
+    }
 }
 
 /****************************************/

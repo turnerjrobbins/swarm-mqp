@@ -24,7 +24,7 @@ public:
    void Update() override;
    void Reset() override;
    void Destroy() override;
-   void SetOccupancy(Real distance, Real angle);
+   void SetOccupancy(Real distance) override;
 
 private:
 

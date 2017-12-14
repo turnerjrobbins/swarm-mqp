@@ -33,7 +33,7 @@ void COccupancyQTUserFunctions::DrawInWorld() {
     CVector3 cOffset(0,0,0.1);
     /* Go through all the cells and draw them */
     for(const auto &pair: cPheromoneCells){
-        CVector3 grid_3d = CVector3(pair.first.GetX()*m_fGridSize, pair.first.GetY()*m_fGridSize, 0.1);
+        CVector3 grid_3d = CVector3(pair.first.GetX()*m_fGridSize, pair.first.GetY()*m_fGridSize, 1);
         DrawPolygon(grid_3d,
                     m_cOrientation, 
                     m_cSquarePoints,

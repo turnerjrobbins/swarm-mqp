@@ -32,24 +32,33 @@ void COccupancyActuator::Init(TConfigurationNode& t_tree){
 /****************************************/
 
 void COccupancyActuator::Update(){
-    if(!m_occupancy_list.empty()) {
-        for(CVector2 occupancy_location : m_occupancy_list) {
-            m_pCOccupancyMedium->SetOccupancy(occupancy_location);
-        }
-        m_occupancy_list.clear();
-    }
+    auto size = m_occupancy_list.size();
+    for(int i = 0; i < size; i++) {
+      m_pCOccupancyMedium->SetOccupancy(m_occupancy_list.front());
+      m_occupancy_list.pop_front();
+    } 
 }
 
-void COccupancyActuator::SetOccupancy(Real dist, Real angle) {
-    CRadians angle_radians = CRadians();
-    angle_radians.FromValueInDegrees(angle);
-    CVector2 local_to_obj = CVector2();
-    local_to_obj.FromPolarCoordinates(dist, angle_radians);
+void COccupancyActuator::SetOccupancy(Real dist) {
+    LOG << "Setting occupancy for " + std::to_string(dist) << std::endl;
+    //Get the position wrt the global frame
     CVector3 global_robot_location = m_pcEmbodiedEntity->GetOriginAnchor().Position;
-    CVector2 global_robot_location_2d = CVector2(global_robot_location.GetX(), global_robot_location.GetY());
-    CVector2 global_to_obj = global_robot_location_2d + local_to_obj;
-    m_occupancy_list.push_front(global_to_obj);
+    //Get the orientation
+    CQuaternion global_robot_orientation = m_pcEmbodiedEntity->GetOriginAnchor().Orientation;
 
+    //Make a vector in the x direction
+    CVector3 local_vec = CVector3(dist, 0.0, 0.0);
+    //rotate it by the quaternion
+    local_vec.Rotate(global_robot_orientation);
+
+    //add the two vectors together to get the location of the object
+    global_robot_location += local_vec;
+
+    //Make it twoD
+    CVector2 obj_location = CVector2(global_robot_location.GetX(), global_robot_location.GetY());
+
+    LOG << obj_location<< std::endl;
+    m_occupancy_list.push_front(obj_location);
 }
 
 /****************************************/
@@ -73,29 +82,7 @@ REGISTER_ACTUATOR(COccupancyActuator,
                 "occupancy", "default",
                 "Chris Cormier [ccormier@wpi.com]",
                 "0.1",
-                "A generic pheromone actuator.",
-                "This actuator allows robots to lay a trail of pheromone.\n"
-                "This implementation of the pheromone actuator is associated to the\n"
-                "pheromone medium. To be able to use this actuator, you must add a\n"
-                "pheromone medium to the <media> section.\n"
-                "This actuator allows a robot to lay a pheromone trail. To lay \n"
-                "pheromone, you need the pheromone sensor.\n"
-                "To use this actuator, in controllers you must include the\n"
-                "ci_pheromone_actuator.h header.\n\n"
-                "REQUIRED XML CONFIGURATION\n\n"
-                "  <controllers>\n"
-                "    ...\n"
-                "    <my_controller ...>\n"
-                "      ...\n"
-                "      <sensors>\n"
-                "        ...\n"
-                "        <pheromone implementation=\"default\"\n"
-                "                           medium=\"pheromone\" />\n"
-                "        ...\n"
-                "      </sensors>\n"
-                "      ...\n"
-                "    </my_controller>\n"
-                "    ...\n"
-                "  </controllers>\n\n",
-                "In Development"
+                "A generic occupancy actuator.",
+                "",
+                ""
 );
