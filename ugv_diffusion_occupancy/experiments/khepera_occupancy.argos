@@ -23,7 +23,7 @@
         <occupancy implementation="default" medium="occupancy_medium"/>
       </actuators>
       <sensors>
-        <kheperaiv_lidar implementation="default" show_rays="true" />
+        <kheperaiv_lidar implementation="default" show_rays="true" num_readings="11"/>
       </sensors>
       <params alpha="7.5" delta="0.1" velocity="5" />
     </kheperaiv_occupancy_controller>
@@ -113,6 +113,7 @@
   <!-- ****************** -->
   <visualization>
     <qt-opengl>
+      <user_functions label="occupancy_qtuser_functions" draw_diffusion="true"/>
       <camera>
         <placement idx="0" position="-1.37702,-1.04453,0.308332" look_at="-1.1334,-1.85855,-0.21895" up="0.15118,-0.505144,0.849691" lens_focal_length="20" />
       </camera>

@@ -1,0 +1,41 @@
+# The set of languages for which implicit dependencies are needed:
+set(CMAKE_DEPENDS_LANGUAGES
+  "CXX"
+  )
+# The set of files for implicit dependencies of each language:
+set(CMAKE_DEPENDS_CHECK_CXX
+  "/home/tjrobbins/swarm-mqp/ugv_diffusion_occupancy/plugins/robots/generic/argos3plugin_simulator_generic_occupancy_automoc.cpp" "/home/tjrobbins/swarm-mqp/ugv_diffusion_occupancy/plugins/robots/generic/CMakeFiles/argos3plugin_simulator_generic_occupancy.dir/argos3plugin_simulator_generic_occupancy_automoc.cpp.o"
+  "/home/tjrobbins/swarm-mqp/ugv_diffusion_occupancy/plugins/robots/generic/control_interface/ci_occupancy_actuator.cpp" "/home/tjrobbins/swarm-mqp/ugv_diffusion_occupancy/plugins/robots/generic/CMakeFiles/argos3plugin_simulator_generic_occupancy.dir/control_interface/ci_occupancy_actuator.cpp.o"
+  "/home/tjrobbins/swarm-mqp/ugv_diffusion_occupancy/plugins/robots/generic/simulator/occupancy_default_actuator.cpp" "/home/tjrobbins/swarm-mqp/ugv_diffusion_occupancy/plugins/robots/generic/CMakeFiles/argos3plugin_simulator_generic_occupancy.dir/simulator/occupancy_default_actuator.cpp.o"
+  )
+set(CMAKE_CXX_COMPILER_ID "GNU")
+
+# Preprocessor definitions for this target.
+set(CMAKE_TARGET_DEFINITIONS_CXX
+  "QT_CORE_LIB"
+  "QT_GUI_LIB"
+  "QT_WIDGETS_LIB"
+  )
+
+# The include file search paths:
+set(CMAKE_CXX_TARGET_INCLUDE_PATH
+  "plugins/robots/generic"
+  "/usr/include/lua5.2"
+  "/usr/local/include"
+  "/usr/include/x86_64-linux-gnu/qt5"
+  "/usr/include/x86_64-linux-gnu/qt5/QtWidgets"
+  "/usr/include/x86_64-linux-gnu/qt5/QtGui"
+  "/usr/include/x86_64-linux-gnu/qt5/QtCore"
+  "/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64"
+  "."
+  "plugins/robots/generic/control_interface"
+  "/home/tjrobbins/swarm-mqp"
+  )
+
+# Targets to which this target links.
+set(CMAKE_TARGET_LINKED_INFO_FILES
+  "/home/tjrobbins/swarm-mqp/ugv_diffusion_occupancy/plugins/simulator/media/CMakeFiles/occupancy_medium.dir/DependInfo.cmake"
+  )
+
+# Fortran module output directory.
+set(CMAKE_Fortran_TARGET_MODULE_DIR "")

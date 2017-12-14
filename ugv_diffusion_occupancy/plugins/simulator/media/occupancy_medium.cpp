@@ -48,14 +48,21 @@ CVector2 CPheromoneMedium::PositionToCellPosition(const CVector2& c_position) co
 /****************************************/
 
 void CPheromoneMedium::Update(){
-    for(auto &pair: m_cPheromoneCells){
-        // update pheromone levels using callback chosen by Init
-        m_cPheromoneUpdater(pair.second);
-        // if pheromone level is 0 remove from map to make iteration quicker
-        if(pair.second == 0){
-            m_cPheromoneCells.erase(pair.first);
-        }
-    }
+    // for(auto &pair: m_cPheromoneCells){
+    //     // update pheromone levels using callback chosen by Init
+    //     m_cPheromoneUpdater(pair.second);
+    //     // if pheromone level is 0 remove from map to make iteration quicker
+    //     if(pair.second == 0){
+    //         m_cPheromoneCells.erase(pair.first);
+    //     }
+    // }
+}
+
+/****************************************/
+/****************************************/
+void CPheromoneMedium::SetOccupancy(const CVector2& c_position) {
+    CVector2 cell_position = PositionToCellPosition(c_position);
+    m_cPheromoneCells[cell_position] = 1;
 }
 
 /****************************************/

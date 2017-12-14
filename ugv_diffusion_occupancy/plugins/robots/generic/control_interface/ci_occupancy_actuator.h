@@ -26,6 +26,8 @@ public:
         return bLayingPheromone;
     }
 
+    inline void SetOccupancy(Real dist, Real angle){}
+
     #ifdef ARGOS_WITH_LUA
         void CreateLuaState(lua_State* pt_lua_state) override;
     #endif

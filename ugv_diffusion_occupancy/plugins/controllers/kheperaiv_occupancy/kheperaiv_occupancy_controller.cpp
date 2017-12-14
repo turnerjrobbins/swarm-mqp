@@ -5,6 +5,10 @@
 /* 2D vector definition */
 #include <argos3/core/utility/math/vector2.h>
 
+#include <argos3/core/utility/logging/argos_log.h>
+
+#include <math.h>
+
 /****************************************/
 /****************************************/
 
@@ -66,33 +70,16 @@ void CKheperaOccupancy::Init(TConfigurationNode& t_node) {
 /****************************************/
 
 void CKheperaOccupancy::ControlStep() {
-   /* Get readings from proximity sensor */
-   const CCI_KheperaIVLIDARSensor::TReadings& tProxReads = pcLidarSensor->GetReadings();
-   /* Sum them together */
-   CVector2 cAccumulator;
-   for(size_t i = 0; i < tProxReads.size(); ++i) {
-      //cAccumulator += CVector2(tProxReads[i].Value, tProxReads[i].Angle);
-      cAccumulator += CVector2(0.0,0.0);
-   }
-   cAccumulator /= tProxReads.size();
-   /* If the angle of the vector is small enough and the closest obstacle
-    * is far enough, continue going straight, otherwise curve a little
-    */
-   CRadians cAngle = cAccumulator.Angle();
-   if(m_cGoStraightAngleRange.WithinMinBoundIncludedMaxBoundIncluded(cAngle) &&
-      cAccumulator.Length() < m_fDelta ) {
-      /* Go straight */
-      m_pcWheels->SetLinearVelocity(m_fWheelVelocity, m_fWheelVelocity);
-   }
-   else {
-      /* Turn, depending on the sign of the angle */
-      if(cAngle.GetValue() > 0.0f) {
-         m_pcWheels->SetLinearVelocity(m_fWheelVelocity, 0.0f);
-      }
-      else {
-         m_pcWheels->SetLinearVelocity(0.0f, m_fWheelVelocity);
-      }
-   }
+   /* First, get all of the readings from the lidar sensor */
+  CCI_KheperaIVLIDARSensor::TReadings lidar_readings = pcLidarSensor->GetReadings();
+  Real dist = 0;
+  if(lidar_readings.size() % 2 ==1) {
+    dist =  lidar_readings[ceil(lidar_readings.size() / 2.0)];
+  }else {
+    LOGERR << "No front-facing lidar reading, use an odd number of rays.\n";
+    std::exit(1);
+  }
+  pcOccupancy->SetOccupancy(dist, 0.0);
 }
 
 /****************************************/

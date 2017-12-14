@@ -32,9 +32,24 @@ void CPheromoneActuator::Init(TConfigurationNode& t_tree){
 /****************************************/
 
 void CPheromoneActuator::Update(){
-    // if(bLayingPheromone)
-    //     m_pCPheromoneMedium->LayPheromone(m_pcEmbodiedEntity->GetOriginAnchor().Position,
-    //                                     m_unStrength);
+    if(!m_occupancy_list.empty()) {
+        for(CVector2 occupancy_location : m_occupancy_list) {
+            m_pCPheromoneMedium->SetOccupancy(occupancy_location);
+        }
+        m_occupancy_list.clear();
+    }
+}
+
+void CPheromoneActuator::SetOccupancy(Real dist, Real angle) {
+    CRadians angle_radians = CRadians();
+    angle_radians.FromValueInDegrees(angle);
+    CVector2 local_to_obj = CVector2();
+    local_to_obj.FromPolarCoordinates(dist, angle_radians);
+    CVector3 global_robot_location = m_pcEmbodiedEntity->GetOriginAnchor().Position;
+    CVector2 global_robot_location_2d = CVector2(global_robot_location.GetX(), global_robot_location.GetY());
+    CVector2 global_to_obj = global_robot_location_2d + local_to_obj;
+    m_occupancy_list.push_front(global_to_obj);
+
 }
 
 /****************************************/
