@@ -1,14 +1,14 @@
-#ifndef CI_PHEROMONE_ACTUATOR_H
-#define CI_PHEROMONE_ACTUATOR_H
+#ifndef CI_OCCUPANCY_ACTUATOR_H
+#define CI_OCCUPANCY_ACTUATOR_H
 
 #include <argos3/core/control_interface/ci_actuator.h>
 
 using namespace argos;
 
-class CCI_PheromoneActuator : public CCI_Actuator{
+class CCI_OccupancyActuator : public CCI_Actuator{
 public:
 
-    CCI_PheromoneActuator();
+    CCI_OccupancyActuator();
 
     inline void SetStrength(const UInt16 un_strength){
         m_unStrength = un_strength;

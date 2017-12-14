@@ -24,7 +24,7 @@ struct VectorCompare
    }
 };
 
-class CPheromoneMedium : public CMedium {
+class COccupancyMedium : public CMedium {
 
 public:
     typedef std::map<CVector2, UInt16, VectorCompare> PheromoneMap;
@@ -88,7 +88,7 @@ public:
      * @param c_cell_key     [description]
      * @param c_position     [description]
      */
-    void SetLocalLevels(CPheromoneMedium::PheromoneMap& c_local_levels,
+    void SetLocalLevels(COccupancyMedium::PheromoneMap& c_local_levels,
                                       const CVector2& c_cell_key,
                                       const CVector2& c_position)const;
 

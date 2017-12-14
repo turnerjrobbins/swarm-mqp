@@ -11,12 +11,12 @@
 #include <argos3/core/simulator/entity/composable_entity.h>
 #include <argos3/core/utility/math/vector2.h>
 #include "../control_interface/ci_occupancy_actuator.h"
-#include <occupancy_medium.h>
+#include <plugins/simulator/media/occupancy_medium.h>
 
 using namespace argos;
 
-class CPheromoneActuator : public CSimulatedActuator,
-                           public CCI_PheromoneActuator {
+class COccupancyActuator : public CSimulatedActuator,
+                           public CCI_OccupancyActuator {
 
 public:
    void SetRobot(CComposableEntity& c_entity) override;
@@ -31,7 +31,7 @@ private:
    /** Reference to embodied entity associated with this actuator */
    CEmbodiedEntity*     m_pcEmbodiedEntity;
    /** Reference to pheromone medium associated with this actuator */
-   CPheromoneMedium*    m_pCPheromoneMedium;
+   COccupancyMedium*    m_pCOccupancyMedium;
 
    std::list<CVector2> m_occupancy_list;
 

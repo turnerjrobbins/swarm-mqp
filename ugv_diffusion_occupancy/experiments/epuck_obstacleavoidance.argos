@@ -17,7 +17,7 @@
   <controllers>
 
     <epuck_obstacleavoidance_controller id="fdc"
-                                        library="/home/turner/argos/swarm-mqp/ugv_diffusion_occupancy/build/lib/libepuck_obstacleavoidance.so">
+                                        library="build/lib/libepuck_obstacleavoidance">
       <actuators>
         <differential_steering implementation="default" />
         <occupancy implementation="default" medium="occupancy_medium"/>

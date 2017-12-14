@@ -61,7 +61,7 @@ private:
 	/* pointer to the differential steering actuator */
 	CCI_DifferentialSteeringActuator* m_pcWheels;
 	/* pointer to the occupancy actuator */
-	CCI_PheromoneActuator* pcOccupancy;
+	CCI_OccupancyActuator* pcOccupancy;
 
 	 /*
     * The following variables are used as parameters for the

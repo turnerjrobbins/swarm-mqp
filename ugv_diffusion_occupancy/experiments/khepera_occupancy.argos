@@ -16,8 +16,7 @@
   <!-- *************** -->
   <controllers>
 
-    <kheperaiv_occupancy_controller id="khivdc"
-                               library="build/lib/libkheperaiv_occupancy">
+    <kheperaiv_occupancy_controller id="khivdc">
       <actuators>
         <differential_steering implementation="default" />
         <occupancy implementation="default" medium="occupancy_medium"/>

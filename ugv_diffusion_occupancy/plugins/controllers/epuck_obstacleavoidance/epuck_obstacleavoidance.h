@@ -85,7 +85,7 @@ private:
    CCI_ProximitySensor* m_pcProximity;
 
    /* pointer to the occupancy actuator */
-   CCI_PheromoneActuator* m_pcOccupancy; //ignore the fact that I haven't even changed the class name.
+   CCI_OccupancyActuator* m_pcOccupancy; //ignore the fact that I haven't even changed the class name.
 
    CCI_PositioningSensor* m_pcPosition;
    /*

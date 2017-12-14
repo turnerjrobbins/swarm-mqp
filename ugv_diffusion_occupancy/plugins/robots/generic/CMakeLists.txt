@@ -14,7 +14,7 @@ target_link_libraries(argos3plugin_simulator_generic_occupancy
   argos3core_simulator
   occupancy_medium)
 
-install(TARGETS argos3plugin_simulator_generic_occupancy DESTINATION /usr/local/lib/argos3/)
+install(TARGETS argos3plugin_simulator_generic_occupancy DESTINATION ${CMAKE_BINARY_DIR}/lib)
 
 #FILE(RELATIVE_PATH relative_dir ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 #install(FILES ${HEADERS_1} DESTINATION "include/${relative_dir}/control_interface")

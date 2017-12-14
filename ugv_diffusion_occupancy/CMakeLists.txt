@@ -38,23 +38,13 @@ include(ARGoSCheckQTOpenGL)
 #
 include_directories(${CMAKE_SOURCE_DIR})
 
-# add buzz to the module path
-# set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/local/share/buzz/cmake)
-
-# Look for Buzz tools, libraries, and headers
-find_package(Buzz)
-if(BUZZ_FOUND)
-  # Define Buzz-related commands
-  include(UseBuzz)
-  include_directories(${BUZZ_C_INCLUDE_DIR})
-endif(BUZZ_FOUND)
-
 # use, i.e. don't skip the full RPATH for the build tree
 set(CMAKE_SKIP_BUILD_RPATH  FALSE)
 
 # when building, don't use the install RPATH already
 # (but later on when installing)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib/vicon_sdk:${CMAKE_BINARY_DIR}/lib")
 
 # add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH

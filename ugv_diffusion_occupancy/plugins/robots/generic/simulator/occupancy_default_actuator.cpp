@@ -7,21 +7,21 @@
 /****************************************/
 /****************************************/
 
-void CPheromoneActuator::SetRobot(CComposableEntity& c_entity){
+void COccupancyActuator::SetRobot(CComposableEntity& c_entity){
     m_pcEmbodiedEntity = &(c_entity.GetComponent<CEmbodiedEntity>("body"));
 }
 
 /****************************************/
 /****************************************/
 
-void CPheromoneActuator::Init(TConfigurationNode& t_tree){
+void COccupancyActuator::Init(TConfigurationNode& t_tree){
     try {
        /* Parent class init */
-       CCI_PheromoneActuator::Init(t_tree);
+       CCI_OccupancyActuator::Init(t_tree);
        /* Get pheromone medium from id specified in the XML */
        std::string strMedium;
        GetNodeAttribute(t_tree, "medium", strMedium);
-       m_pCPheromoneMedium = &(CSimulator::GetInstance().GetMedium<CPheromoneMedium>(strMedium));
+       m_pCOccupancyMedium = &(CSimulator::GetInstance().GetMedium<COccupancyMedium>(strMedium));
     }
     catch(CARGoSException& ex) {
        THROW_ARGOSEXCEPTION_NESTED("Error initializing the range and bearing medium sensor", ex);
@@ -31,16 +31,16 @@ void CPheromoneActuator::Init(TConfigurationNode& t_tree){
 /****************************************/
 /****************************************/
 
-void CPheromoneActuator::Update(){
+void COccupancyActuator::Update(){
     if(!m_occupancy_list.empty()) {
         for(CVector2 occupancy_location : m_occupancy_list) {
-            m_pCPheromoneMedium->SetOccupancy(occupancy_location);
+            m_pCOccupancyMedium->SetOccupancy(occupancy_location);
         }
         m_occupancy_list.clear();
     }
 }
 
-void CPheromoneActuator::SetOccupancy(Real dist, Real angle) {
+void COccupancyActuator::SetOccupancy(Real dist, Real angle) {
     CRadians angle_radians = CRadians();
     angle_radians.FromValueInDegrees(angle);
     CVector2 local_to_obj = CVector2();
@@ -55,21 +55,21 @@ void CPheromoneActuator::SetOccupancy(Real dist, Real angle) {
 /****************************************/
 /****************************************/
 
-void CPheromoneActuator::Reset(){
+void COccupancyActuator::Reset(){
     bLayingPheromone = false;
 }
 
 /****************************************/
 /****************************************/
 
-void CPheromoneActuator::Destroy(){
+void COccupancyActuator::Destroy(){
 
 }
 
 /****************************************/
 /****************************************/
 
-REGISTER_ACTUATOR(CPheromoneActuator,
+REGISTER_ACTUATOR(COccupancyActuator,
                 "occupancy", "default",
                 "Chris Cormier [ccormier@wpi.com]",
                 "0.1",

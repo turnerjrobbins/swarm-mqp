@@ -1,8 +1,8 @@
-#ifndef PHEROMONE_QTUSER_FUNCTIONS_H
-#define PHEROMONE_QTUSER_FUNCTIONS_H
+#ifndef OCCUPANCY_QTUSER_FUNCTIONS_H
+#define OCCUPANCY_QTUSER_FUNCTIONS_H
 
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_user_functions.h>
-#include <occupancy_medium.h>
+#include <plugins/simulator/media/occupancy_medium.h>
 #include <argos3/core/utility/math/quaternion.h>
 #include <argos3/core/utility/math/vector2.h>
 
@@ -23,7 +23,7 @@ public:
 private:
     bool m_bDrawDiffusion;
     Real m_fGridSize;
-    CPheromoneMedium& m_cPheraMed;
+    COccupancyMedium& m_cPheraMed;
     std::vector<CVector2> m_cSquarePoints;
     CQuaternion m_cOrientation;
 

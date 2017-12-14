@@ -50,7 +50,7 @@ void CKheperaOccupancy::Init(TConfigurationNode& t_node) {
     */
    m_pcWheels    = GetActuator<CCI_DifferentialSteeringActuator>("differential_steering");
    pcLidarSensor = GetSensor  <CCI_KheperaIVLIDARSensor    >("kheperaiv_lidar"  );
-   pcOccupancy = GetActuator    <CCI_PheromoneActuator           >("occupancy");
+   pcOccupancy = GetActuator    <CCI_OccupancyActuator           >("occupancy");
 
 
    /*
@@ -75,11 +75,12 @@ void CKheperaOccupancy::ControlStep() {
   Real dist = 0;
   if(lidar_readings.size() % 2 ==1) {
     dist =  lidar_readings[ceil(lidar_readings.size() / 2.0)];
+    LOG << dist << std::endl;
   }else {
     LOGERR << "No front-facing lidar reading, use an odd number of rays.\n";
     std::exit(1);
   }
-  pcOccupancy->SetOccupancy(dist, 0.0);
+  // pcOccupancy->SetOccupancy(dist, 0.0);
 }
 
 /****************************************/

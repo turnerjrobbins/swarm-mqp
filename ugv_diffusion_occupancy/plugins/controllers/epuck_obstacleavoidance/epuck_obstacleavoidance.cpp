@@ -47,7 +47,7 @@ void CEPuckObstacleAvoidance::Init(TConfigurationNode& t_node) {
     */
    m_pcWheels    = GetActuator<CCI_DifferentialSteeringActuator>("differential_steering");
    m_pcProximity = GetSensor  <CCI_ProximitySensor             >("proximity"    );
-   m_pcOccupancy = GetActuator<CCI_PheromoneActuator           >("occupancy");
+   m_pcOccupancy = GetActuator<CCI_OccupancyActuator           >("occupancy");
    m_pcPosition = GetSensor   <CCI_PositioningSensor           >("positioning");
    /*
     * Parse the configuration file

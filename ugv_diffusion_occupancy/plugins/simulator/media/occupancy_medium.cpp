@@ -4,7 +4,7 @@
 /****************************************/
 /****************************************/
 
-void CPheromoneMedium::Init(TConfigurationNode& t_tree){
+void COccupancyMedium::Init(TConfigurationNode& t_tree){
     CMedium::Init(t_tree);
 
     std::string strDecayOption("linear");
@@ -16,28 +16,28 @@ void CPheromoneMedium::Init(TConfigurationNode& t_tree){
 /****************************************/
 /****************************************/
 
-void CPheromoneMedium::PostSpaceInit(){
+void COccupancyMedium::PostSpaceInit(){
 
 }
 
 /****************************************/
 /****************************************/
 
-void CPheromoneMedium::Reset(){
+void COccupancyMedium::Reset(){
     m_cPheromoneCells.clear();
 }
 
 /****************************************/
 /****************************************/
 
-void CPheromoneMedium::Destroy(){
+void COccupancyMedium::Destroy(){
 
 }
 
 /****************************************/
 /****************************************/
 
-CVector2 CPheromoneMedium::PositionToCellPosition(const CVector2& c_position) const{
+CVector2 COccupancyMedium::PositionToCellPosition(const CVector2& c_position) const{
     CVector2 cCellPosition;
     cCellPosition.SetX(ToCellDistance(c_position.GetX()));
     cCellPosition.SetY(ToCellDistance(c_position.GetY()));
@@ -47,7 +47,7 @@ CVector2 CPheromoneMedium::PositionToCellPosition(const CVector2& c_position) co
 /****************************************/
 /****************************************/
 
-void CPheromoneMedium::Update(){
+void COccupancyMedium::Update(){
     // for(auto &pair: m_cPheromoneCells){
     //     // update pheromone levels using callback chosen by Init
     //     m_cPheromoneUpdater(pair.second);
@@ -60,7 +60,7 @@ void CPheromoneMedium::Update(){
 
 /****************************************/
 /****************************************/
-void CPheromoneMedium::SetOccupancy(const CVector2& c_position) {
+void COccupancyMedium::SetOccupancy(const CVector2& c_position) {
     CVector2 cell_position = PositionToCellPosition(c_position);
     m_cPheromoneCells[cell_position] = 1;
 }
@@ -68,11 +68,11 @@ void CPheromoneMedium::SetOccupancy(const CVector2& c_position) {
 /****************************************/
 /****************************************/
 
-void CPheromoneMedium::SetLocalLevels(CPheromoneMedium::PheromoneMap& c_local_levels,
+void COccupancyMedium::SetLocalLevels(COccupancyMedium::PheromoneMap& c_local_levels,
     const CVector2& c_cell_key,
     const CVector2& c_position)const{
 
-    CPheromoneMedium::PheromoneMap::const_iterator fKeyPair;
+    COccupancyMedium::PheromoneMap::const_iterator fKeyPair;
 
     // check to see if the cell has any pheromone
     fKeyPair = m_cPheromoneCells.find(c_cell_key);
@@ -89,10 +89,10 @@ void CPheromoneMedium::SetLocalLevels(CPheromoneMedium::PheromoneMap& c_local_le
 /****************************************/
 
 
-CPheromoneMedium::PheromoneMap CPheromoneMedium::ReadPheromone(const CVector2& c_position, 
+COccupancyMedium::PheromoneMap COccupancyMedium::ReadPheromone(const CVector2& c_position, 
     const Real& f_range, 
     const bool& b_circle)const{
-    CPheromoneMedium::PheromoneMap cLocalLevels;
+    COccupancyMedium::PheromoneMap cLocalLevels;
     
     // convert from meters to cell values
     //
@@ -112,7 +112,7 @@ CPheromoneMedium::PheromoneMap CPheromoneMedium::ReadPheromone(const CVector2& c
 /****************************************/
 /****************************************/
 
-REGISTER_MEDIUM(CPheromoneMedium,
+REGISTER_MEDIUM(COccupancyMedium,
  "occupancy_medium",
  "Turner Robbins [tjrobbns@wpi.edu]",
  "0.0",

@@ -1,4 +1,4 @@
-add_library(kheperaiv_occupancy MODULE kheperaiv_occupancy_controller.h kheperaiv_occupancy_controller.cpp)
+add_library(kheperaiv_occupancy SHARED kheperaiv_occupancy_controller.h kheperaiv_occupancy_controller.cpp)
 target_link_libraries(kheperaiv_occupancy
   argos3core_simulator
   argos3plugin_simulator_epuck

@@ -4,7 +4,7 @@
 /****************************************/
 
 COccupancyQTUserFunctions::COccupancyQTUserFunctions() :
-   m_cPheraMed(CSimulator::GetInstance().GetMedium<CPheromoneMedium>("occupancy_medium"))
+   m_cPheraMed(CSimulator::GetInstance().GetMedium<COccupancyMedium>("occupancy_medium"))
    {
     // get the grid size and calculate the square corners
     m_fGridSize = m_cPheraMed.GetCellSize();
@@ -28,7 +28,7 @@ void COccupancyQTUserFunctions::Init(TConfigurationNode& t_tree){
 /****************************************/
 
 void COccupancyQTUserFunctions::DrawInWorld() {
-    const CPheromoneMedium::PheromoneMap& cPheromoneCells = m_cPheraMed.GetPheromoneMap();
+    const COccupancyMedium::PheromoneMap& cPheromoneCells = m_cPheraMed.GetPheromoneMap();
     // offset is so the square is not in the same space as the floor 
     CVector3 cOffset(0,0,0.1);
     /* Go through all the cells and draw them */
