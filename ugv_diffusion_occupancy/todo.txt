@@ -23,3 +23,7 @@ Make kheperaIV experiment							DONE - 30 minutes
 Get it to run										DONE - 30 minutes (still need to either add a proximity sensor or make it use lidar for the diffusion)
 Update occupancy medium to keep track of occupancy
 update occupancy visualizer to show occupancy
+
+--------------------------OCTOMAP--------------------------
+Modify the kheperaiv_occupancy_controller to call the loop function's insert ray method.
+	argos::CSimulator::GetLoopFunctions() - returns a reference to the loop functions associated to the current experiment
