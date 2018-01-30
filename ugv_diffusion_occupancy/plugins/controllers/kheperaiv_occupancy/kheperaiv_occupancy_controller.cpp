@@ -121,15 +121,14 @@ void CKheperaOccupancy::ControlStep() {
     CVector3 r_loc = m_pcPosition->GetReading().Position;
     CQuaternion r_angle = m_pcPosition->GetReading().Orientation;
     CRadians rob_z_rot, x, y;
-    r_angle.ToEulerAngles(x, y, rob_z_rot);
+    r_angle.ToEulerAngles(rob_z_rot, y, x);
     LOGERR << "Robot Global Pos: " << r_loc << std::endl;
     for(Real bad_dist: lidar_readings) {
-      //Real dist = 100.0 * bad_dist;
-      if(dist == 0.0f) {
+      if(bad_dist == 0.0f) {
         angleOffset += angleIncrement;
         continue;
       }
-      Real dist = bad_dist * 10.0f;
+      Real dist = bad_dist * 100.0f;
       CRadians sensor_offset;
       sensor_offset.FromValueInDegrees(angleOffset);
       //create a CVector3 with dist as it's length, and then rotate it to the global frame
@@ -140,7 +139,7 @@ void CKheperaOccupancy::ControlStep() {
       CVector3 endp = CVector3(reading + r_loc);
       octomap::point3d octoEndp = octomap::point3d(endp.GetX(), endp.GetY(), endp.GetZ());
       octomap::point3d startp = octomap::point3d(r_loc.GetX(), r_loc.GetY(), r_loc.GetZ());
-      m_localMap.insertRay(startp, octoEndp, 20.0);
+      m_localMap.insertRay(startp, octoEndp);
       angleOffset += angleIncrement;
     }
 }
