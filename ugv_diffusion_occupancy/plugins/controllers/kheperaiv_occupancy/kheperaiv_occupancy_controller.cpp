@@ -78,18 +78,17 @@ void CKheperaOccupancy::ControlStep() {
    /* First, get all of the readings from the lidar sensor */
   CCI_KheperaIVLIDARSensor::TReadings lidar_readings = pcLidarSensor->GetReadings();
   Real dist = 0;
-  if(lidar_readings.size() % 2 ==1) {
-    dist =  lidar_readings[ceil(lidar_readings.size() / 2.0)];
-    if((dist / .01) < .5) {
-      pcOccupancy->SetOccupancy(dist / 0.01);
-    }
+  // if(lidar_readings.size() % 2 ==1) {
+  //   dist =  lidar_readings[ceil(lidar_readings.size() / 2.0)];
+  //   if((dist / .01) < .5) {
+  //     pcOccupancy->SetOccupancy(dist / 0.01);
+
+  //   }
     
-  }else {
-    LOGERR << "No front-facing lidar reading, use an odd number of rays.\n";
-    std::exit(1);
-  }
-
-
+  // }else {
+  //   LOGERR << "No front-facing lidar reading, use an odd number of rays.\n";
+  //   std::exit(1);
+  // }
 
   /* Get readings from proximity sensor */
    const CCI_KheperaIVProximitySensor::TReadings& tProxReads = m_pcProximity->GetReadings();
@@ -117,13 +116,33 @@ void CKheperaOccupancy::ControlStep() {
          m_pcWheels->SetLinearVelocity(0.0f, m_fWheelVelocity);
       }
     }
-
-    /*Get position of the robot*/
-    CVector3 global_robot_location = m_pcPosition->GetReading().Position;
-    //Get the orientation
-    CQuaternion global_robot_orientation = m_pcPosition->GetReading().Orientation;
-
-    
+    double angleOffset = -210.0 / 2.0;
+    double angleIncrement = 210 / lidar_readings.size();
+    CVector3 r_loc = m_pcPosition->GetReading().Position;
+    CQuaternion r_angle = m_pcPosition->GetReading().Orientation;
+    CRadians rob_z_rot, x, y;
+    r_angle.ToEulerAngles(x, y, rob_z_rot);
+    LOGERR << "Robot Global Pos: " << r_loc << std::endl;
+    for(Real bad_dist: lidar_readings) {
+      //Real dist = 100.0 * bad_dist;
+      if(dist == 0.0f) {
+        angleOffset += angleIncrement;
+        continue;
+      }
+      Real dist = bad_dist * 10.0f;
+      CRadians sensor_offset;
+      sensor_offset.FromValueInDegrees(angleOffset);
+      //create a CVector3 with dist as it's length, and then rotate it to the global frame
+      CVector3 reading = CVector3(dist, 0.0, 0.0);
+      CRadians glob_rot = rob_z_rot + sensor_offset;
+      reading.RotateZ(glob_rot);
+      //add that to the robot's position
+      CVector3 endp = CVector3(reading + r_loc);
+      octomap::point3d octoEndp = octomap::point3d(endp.GetX(), endp.GetY(), endp.GetZ());
+      octomap::point3d startp = octomap::point3d(r_loc.GetX(), r_loc.GetY(), r_loc.GetZ());
+      m_localMap.insertRay(startp, octoEndp, 20.0);
+      angleOffset += angleIncrement;
+    }
 }
 
 /****************************************/

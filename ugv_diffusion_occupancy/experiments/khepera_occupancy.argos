@@ -24,7 +24,7 @@
       <sensors>
         <positioning implementation="default"/>
         <kheperaiv_proximity implementation="default" show_rays="false" />
-        <kheperaiv_lidar implementation="default" show_rays="true" num_readings="11"/>
+        <kheperaiv_lidar implementation="default" show_rays="true" num_readings="100"/>
       </sensors>
       <params alpha="7.5" delta="0.1" velocity="5" />
     </kheperaiv_occupancy_controller>
