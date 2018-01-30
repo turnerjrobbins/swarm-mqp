@@ -1,3 +1,5 @@
+#ifndef KHEPERAIV_OCCUPANCY_CONTROLLER_H
+#define KHEPERAIV_OCCUPANCY_CONTROLLER_H
 //INCLUDE
 
 #include <argos3/core/control_interface/ci_controller.h>
@@ -7,10 +9,14 @@
 #include <argos3/plugins/robots/kheperaiv/control_interface/ci_kheperaiv_lidar_sensor.h>
 /* Definition of interface for occupancy actuator */
 #include <ci_occupancy_actuator.h>
+/* Definition of the control interface for the position sensor and sreading */
+#include <argos3/plugins/robots/generic/control_interface/ci_positioning_sensor.h>
 
 #include <argos3/plugins/robots/kheperaiv/control_interface/ci_kheperaiv_proximity_sensor.h>
 
-
+/*octomap includes for OcTree & various octomap functions*/
+#include <octomap/octomap.h>
+#include <octomap/OcTree.h>
 
 //DEFINITIONS
 using namespace argos;
@@ -64,8 +70,10 @@ private:
 	CCI_DifferentialSteeringActuator* m_pcWheels;
 	/* pointer to the occupancy actuator */
 	CCI_OccupancyActuator* pcOccupancy;
-
+  /* pointer to the proximity sensor */
   CCI_KheperaIVProximitySensor* m_pcProximity;
+  /* pointer to the position sensor */
+  CCI_PositioningSensor* m_pcPosition;
 
 	 /*
     * The following variables are used as parameters for the
@@ -90,5 +98,11 @@ private:
    /* Angle tolerance range to go straight.
     * It is set to [-alpha,alpha]. */
    CRange<CRadians> m_cGoStraightAngleRange;
+   /* octomap */
+   octomap::OcTree m_localMap;
+   /* current position */
+   CCI_PositioningSensor::SReading m_position;
+
 
 };
+#endif

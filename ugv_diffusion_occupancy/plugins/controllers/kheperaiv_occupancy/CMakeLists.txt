@@ -4,7 +4,11 @@ target_link_libraries(kheperaiv_occupancy
   argos3plugin_simulator_epuck
   argos3plugin_simulator_genericrobot
   argos3plugin_simulator_kheperaiv.so
-  argos3plugin_simulator_generic_occupancy)
+  argos3plugin_simulator_generic_occupancy
+  liboctomap.so
+  liboctomath.so
+  liboctovis.so
+  )
 
 install(TARGETS kheperaiv_occupancy DESTINATION ${CMAKE_BINARY_DIR}/lib)
 

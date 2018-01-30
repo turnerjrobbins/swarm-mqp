@@ -20,7 +20,8 @@ CKheperaOccupancy::CKheperaOccupancy() :
    m_fDelta(0.5f),
    m_fWheelVelocity(2.5f),
    m_cGoStraightAngleRange(-ToRadians(m_cAlpha),
-                           ToRadians(m_cAlpha)) {}
+                           ToRadians(m_cAlpha)),
+   m_localMap(octomap::OcTree(0.01)) {}
 
 /****************************************/
 /****************************************/
@@ -48,11 +49,11 @@ void CKheperaOccupancy::Init(TConfigurationNode& t_node) {
     * list a device in the XML and then you request it here, an error
     * occurs.
     */
-   m_pcWheels    = GetActuator<CCI_DifferentialSteeringActuator>("differential_steering");
-   pcLidarSensor = GetSensor  <CCI_KheperaIVLIDARSensor        >("kheperaiv_lidar"  );
-   pcOccupancy   = GetActuator<CCI_OccupancyActuator           >("occupancy");
-   m_pcProximity = GetSensor <CCI_KheperaIVProximitySensor >("kheperaiv_proximity" );
-
+   m_pcWheels    = GetActuator<CCI_DifferentialSteeringActuator >("differential_steering");
+   pcLidarSensor = GetSensor  <CCI_KheperaIVLIDARSensor         >("kheperaiv_lidar"  );
+   pcOccupancy   = GetActuator<CCI_OccupancyActuator            >("occupancy");
+   m_pcProximity = GetSensor  <CCI_KheperaIVProximitySensor     >("kheperaiv_proximity" );
+   m_pcPosition  = GetSensor  <CCI_PositioningSensor            >("positioning");
 
    /*
     * Parse the configuration file
@@ -71,6 +72,9 @@ void CKheperaOccupancy::Init(TConfigurationNode& t_node) {
 /****************************************/
 
 void CKheperaOccupancy::ControlStep() {
+  /* get position */
+  m_position = m_pcPosition->GetReading();
+
    /* First, get all of the readings from the lidar sensor */
   CCI_KheperaIVLIDARSensor::TReadings lidar_readings = pcLidarSensor->GetReadings();
   Real dist = 0;
@@ -113,6 +117,13 @@ void CKheperaOccupancy::ControlStep() {
          m_pcWheels->SetLinearVelocity(0.0f, m_fWheelVelocity);
       }
     }
+
+    /*Get position of the robot*/
+    CVector3 global_robot_location = m_pcPosition->GetReading().Position;
+    //Get the orientation
+    CQuaternion global_robot_orientation = m_pcPosition->GetReading().Orientation;
+
+    
 }
 
 /****************************************/
