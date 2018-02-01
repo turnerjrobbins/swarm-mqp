@@ -21,7 +21,7 @@ CKheperaOccupancy::CKheperaOccupancy() :
    m_fWheelVelocity(2.5f),
    m_cGoStraightAngleRange(-ToRadians(m_cAlpha),
                            ToRadians(m_cAlpha)),
-   m_localMap(octomap::OcTree(0.01)) {}
+   m_localMap(octomap::OcTree(0.005)) {}
 
 /****************************************/
 /****************************************/
@@ -89,28 +89,39 @@ void CKheperaOccupancy::ControlStep() {
   //   LOGERR << "No front-facing lidar reading, use an odd number of rays.\n";
   //   std::exit(1);
   // }
-    double angleOffset = -210.0 / 2.0;
-    double angleIncrement = 210 / lidar_readings.size();
+    double angleOffset = -105.0;
+    double angleIncrement = 210.0f / ((float)lidar_readings.size());
     CVector3 r_loc = m_pcPosition->GetReading().Position;
-    octomap::point3d startp = octomap::point3d(r_loc.GetX(), r_loc.GetY(), r_loc.GetZ());
     CQuaternion r_angle = m_pcPosition->GetReading().Orientation;
     CRadians rob_z_rot, x, y;
     r_angle.ToEulerAngles(rob_z_rot, y, x);
-    LOGERR << "Robot Global Pos: " << r_loc << std::endl;
+    //LOGERR << "Robot Global Pos: " << r_loc << std::endl;
+    //LOGERR << "Robot Global Rot: " << rob_z_rot << std::endl;
+    //calculate the startpoint of the ray
+      //distance from center of robot = .02 + 0.0704 (defined in khepera measures)
+    CVector3 sensorRayStart = CVector3(0.0f, 0.0f, 0.0f);
     for(Real bad_dist: lidar_readings) {
       if(bad_dist == 0.0f) {
         angleOffset += angleIncrement;
+        LOGERR << "0 ray" << std::endl;
         continue;
       }
-      Real dist = bad_dist * 100.0f;
-      CRadians sensor_offset;
+      Real dist = bad_dist / 100.0f;
+      CRadians sensor_offset = CRadians(0.01f);
       sensor_offset.FromValueInDegrees(angleOffset);
       //create a CVector3 with dist as it's length, and then rotate it to the global frame
-      CVector3 reading = CVector3(dist, 0.0, 0.0);
-      CRadians glob_rot = rob_z_rot + sensor_offset;
-      reading.RotateZ(glob_rot);
+      CVector3 reading = CVector3(dist, 0.0f, 0.0f);
+      reading.RotateZ(rob_z_rot + sensor_offset);
       //add that to the robot's position
-      CVector3 endp = CVector3(reading + r_loc);
+      CVector3 endp = CVector3(reading.GetX() + r_loc.GetX(), 
+                                reading.GetY() + r_loc.GetY(),
+                                reading.GetZ() + r_loc.GetZ());
+      //LOGERR << "Sensor Endpoint: " << endp << std::endl;
+
+      //rotate start point of ray
+      sensorRayStart.RotateZ(rob_z_rot + sensor_offset);
+      
+      octomap::point3d startp = octomap::point3d(sensorRayStart.GetX(), sensorRayStart.GetY(), sensorRayStart.GetZ());
       octomap::point3d octoEndp = octomap::point3d(endp.GetX(), endp.GetY(), endp.GetZ());
       m_localMap.insertRay(startp, octoEndp);
       angleOffset += angleIncrement;
@@ -120,32 +131,32 @@ void CKheperaOccupancy::ControlStep() {
   /***********DIFFUSION******************/
   /**************************************/
   /* Get readings from proximity sensor */
-  // const CCI_KheperaIVProximitySensor::TReadings& tProxReads = m_pcProximity->GetReadings();
-  // /* Sum them together */
-  // CVector2 cAccumulator;
-  // for(size_t i = 0; i < tProxReads.size(); ++i) {
-  //   cAccumulator += CVector2(tProxReads[i].Value, tProxReads[i].Angle);
-  // }
-  // cAccumulator /= tProxReads.size();
-  // /* If the angle of the vector is small enough and the closest obstacle
-  //  * is far enough, continue going straight, otherwise curve a little
-  //  */
-  // CRadians cAngle = cAccumulator.Angle();
-  // if(m_cGoStraightAngleRange.WithinMinBoundIncludedMaxBoundIncluded(cAngle) &&
-  //     (cAccumulator.Length() * 2.0) < m_fDelta ) {
-  //     /* Go straight */
-  //     m_pcWheels->SetLinearVelocity(m_fWheelVelocity, m_fWheelVelocity);
-  // }
-  // else {
-  //   /* Turn, depending on the sign of the angle */
-  //   if(cAngle.GetValue() > 0.0f) {
-  //     m_pcWheels->SetLinearVelocity(m_fWheelVelocity, 0.0f);
-  //   }
-  //   else {
-  //     m_pcWheels->SetLinearVelocity(0.0f, m_fWheelVelocity);
-  //   }
-  // }
-  m_pcWheels->SetLinearVelocity(0.0f, m_fWheelVelocity / 2.0f);
+  const CCI_KheperaIVProximitySensor::TReadings& tProxReads = m_pcProximity->GetReadings();
+  /* Sum them together */
+  CVector2 cAccumulator;
+  for(size_t i = 0; i < tProxReads.size(); ++i) {
+    cAccumulator += CVector2(tProxReads[i].Value, tProxReads[i].Angle);
+  }
+  cAccumulator /= tProxReads.size();
+  /* If the angle of the vector is small enough and the closest obstacle
+   * is far enough, continue going straight, otherwise curve a little
+   */
+  CRadians cAngle = cAccumulator.Angle();
+  if(m_cGoStraightAngleRange.WithinMinBoundIncludedMaxBoundIncluded(cAngle) &&
+      (cAccumulator.Length() * 2.0) < m_fDelta ) {
+      /* Go straight */
+      m_pcWheels->SetLinearVelocity(m_fWheelVelocity, m_fWheelVelocity);
+  }
+  else {
+    /* Turn, depending on the sign of the angle */
+    if(cAngle.GetValue() > 0.0f) {
+      m_pcWheels->SetLinearVelocity(m_fWheelVelocity, 0.0f);
+    }
+    else {
+      m_pcWheels->SetLinearVelocity(0.0f, m_fWheelVelocity);
+    }
+  }
+  //m_pcWheels->SetLinearVelocity(-m_fWheelVelocity / 2.0f , m_fWheelVelocity / 2.0f);
 }
 
 /****************************************/
