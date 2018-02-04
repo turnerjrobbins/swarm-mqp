@@ -1,8 +1,12 @@
 #ifndef OCTOMAP_MANAGER_H
 #define OCTOMAP_MANAGER_H
 #include <argos3/core/simulator/loop_functions.h>
+#include <argos3/plugins/robots/kheperaiv/simulator/kheperaiv_entity.h>
+#include <argos3/core/simulator/space/space.h>
+
 #include <octomap/octomap.h>
 #include <octomap/OcTree.h>
+
 
 using namespace argos;
 using namespace octomap;
@@ -10,7 +14,7 @@ using namespace octomap;
 class CLoopOctomapManager : public CLoopFunctions {
 public:
 	//Constructor
-	CLoopOctomapManager() : CLoopFunctions(), m_OcTree(OcTree(0.1)) {} //Argument is resolution?
+	CLoopOctomapManager() : CLoopFunctions(), m_OcMap(OcTree(0.01)) {} //Argument is resolution?
 
 	//Destructor
 	~CLoopOctomapManager() {}
@@ -19,14 +23,17 @@ public:
 
 	virtual void Reset() {}
 
-	virtual void Destroy() {}
+	virtual void Destroy() {
+		m_OcMap.writeBinary("diffusion_tree.bt");
+	}
 
 	virtual void PreStep() {}
 
-	virtual void PostStep() {}
+	virtual void PostStep();
 
 	void insertRay();
 private:
-	octomap::OcTree m_OcTree;
+	octomap::OcTree m_OcMap;
+	CSpace::TMapPerType m_KheperaMap;
 };
 #endif

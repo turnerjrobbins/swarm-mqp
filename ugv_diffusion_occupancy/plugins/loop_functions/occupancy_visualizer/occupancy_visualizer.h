@@ -26,7 +26,6 @@ private:
     COccupancyMedium& m_cPheraMed;
     std::vector<CVector2> m_cSquarePoints;
     CQuaternion m_cOrientation;
-
 };
 
 #endif

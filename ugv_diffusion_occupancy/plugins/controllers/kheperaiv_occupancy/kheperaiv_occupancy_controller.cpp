@@ -7,7 +7,17 @@
 
 #include <argos3/core/utility/logging/argos_log.h>
 
+#include <argos3/plugins/robots/kheperaiv/simulator/kheperaiv_lidar_default_sensor.h>
+
+#include <argos3/plugins/robots/kheperaiv/control_interface/ci_kheperaiv_lidar_sensor.h>
+
+#include <argos3/plugins/robots/kheperaiv/simulator/kheperaiv_measures.h>
+
 #include <math.h>
+
+#include <argos3/core/control_interface/ci_sensor.h>
+
+typedef std::vector<Real> TReadings;
 
 /****************************************/
 /****************************************/
@@ -21,7 +31,8 @@ CKheperaOccupancy::CKheperaOccupancy() :
    m_fWheelVelocity(2.5f),
    m_cGoStraightAngleRange(-ToRadians(m_cAlpha),
                            ToRadians(m_cAlpha)),
-   m_localMap(octomap::OcTree(0.005)) {}
+   m_localMap(octomap::OcTree(0.01)),
+   m_localScan(octomap::Pointcloud()){}
 
 /****************************************/
 /****************************************/
@@ -66,67 +77,18 @@ void CKheperaOccupancy::Init(TConfigurationNode& t_node) {
    m_cGoStraightAngleRange.Set(-ToRadians(m_cAlpha), ToRadians(m_cAlpha));
    GetNodeAttributeOrDefault(t_node, "delta", m_fDelta, m_fDelta);
    GetNodeAttributeOrDefault(t_node, "velocity", m_fWheelVelocity, m_fWheelVelocity);
+  const TReadings& readings = pcLidarSensor->GetReadings();
+  CRadians deltaAngle = KHEPERAIV_LIDAR_ANGLE_SPAN / readings.size();
+  for(size_t i = 0; i < readings.size(); ++i) {
+    /*push angle onto vector*/
+    m_cAngleOffsets.push_back(-KHEPERAIV_LIDAR_ANGLE_SPAN * 0.5 + i * deltaAngle);
+  }
 }
 
 /****************************************/
 /****************************************/
 
 void CKheperaOccupancy::ControlStep() {
-  /* get position */
-  m_position = m_pcPosition->GetReading();
-
-   /* First, get all of the readings from the lidar sensor */
-  CCI_KheperaIVLIDARSensor::TReadings lidar_readings = pcLidarSensor->GetReadings();
-  Real dist = 0;
-  // if(lidar_readings.size() % 2 ==1) {
-  //   dist =  lidar_readings[ceil(lidar_readings.size() / 2.0)];
-  //   if((dist / .01) < .5) {
-  //     pcOccupancy->SetOccupancy(dist / 0.01);
-
-  //   }
-    
-  // }else {
-  //   LOGERR << "No front-facing lidar reading, use an odd number of rays.\n";
-  //   std::exit(1);
-  // }
-    double angleOffset = -105.0;
-    double angleIncrement = 210.0f / ((float)lidar_readings.size());
-    CVector3 r_loc = m_pcPosition->GetReading().Position;
-    CQuaternion r_angle = m_pcPosition->GetReading().Orientation;
-    CRadians rob_z_rot, x, y;
-    r_angle.ToEulerAngles(rob_z_rot, y, x);
-    //LOGERR << "Robot Global Pos: " << r_loc << std::endl;
-    //LOGERR << "Robot Global Rot: " << rob_z_rot << std::endl;
-    //calculate the startpoint of the ray
-      //distance from center of robot = .02 + 0.0704 (defined in khepera measures)
-    CVector3 sensorRayStart = CVector3(0.0f, 0.0f, 0.0f);
-    for(Real bad_dist: lidar_readings) {
-      if(bad_dist == 0.0f) {
-        angleOffset += angleIncrement;
-        LOGERR << "0 ray" << std::endl;
-        continue;
-      }
-      Real dist = bad_dist / 100.0f;
-      CRadians sensor_offset = CRadians(0.01f);
-      sensor_offset.FromValueInDegrees(angleOffset);
-      //create a CVector3 with dist as it's length, and then rotate it to the global frame
-      CVector3 reading = CVector3(dist, 0.0f, 0.0f);
-      reading.RotateZ(rob_z_rot + sensor_offset);
-      //add that to the robot's position
-      CVector3 endp = CVector3(reading.GetX() + r_loc.GetX(), 
-                                reading.GetY() + r_loc.GetY(),
-                                reading.GetZ() + r_loc.GetZ());
-      //LOGERR << "Sensor Endpoint: " << endp << std::endl;
-
-      //rotate start point of ray
-      sensorRayStart.RotateZ(rob_z_rot + sensor_offset);
-      
-      octomap::point3d startp = octomap::point3d(sensorRayStart.GetX(), sensorRayStart.GetY(), sensorRayStart.GetZ());
-      octomap::point3d octoEndp = octomap::point3d(endp.GetX(), endp.GetY(), endp.GetZ());
-      m_localMap.insertRay(startp, octoEndp);
-      angleOffset += angleIncrement;
-    }
-
   /**************************************/
   /***********DIFFUSION******************/
   /**************************************/
@@ -156,7 +118,35 @@ void CKheperaOccupancy::ControlStep() {
       m_pcWheels->SetLinearVelocity(0.0f, m_fWheelVelocity);
     }
   }
-  //m_pcWheels->SetLinearVelocity(-m_fWheelVelocity / 2.0f , m_fWheelVelocity / 2.0f);
+  /**************************************/
+  /***********PointCloud*****************/
+  /**************************************/
+  /* Get robot position and orientation */
+  CQuaternion r_angle = m_pcPosition->GetReading().Orientation;
+  CRadians rob_z_rot, y, x;
+  m_pcPosition->GetReading().Orientation.ToEulerAngles(rob_z_rot, y, x);
+  /* Get readings from lidar */
+  const TReadings& readings = pcLidarSensor->GetReadings();
+  /* Ray start at (0,0,0) */
+  CVector3 rayStart, rayEnd;
+  /* How much to rotate rayEnd at each iteration */
+  CRadians deltaAngle = KHEPERAIV_LIDAR_ANGLE_SPAN / readings.size();
+
+  /* For each reading, update the octomap */
+  for(size_t i = 0; i < readings.size(); ++i) {
+    rayStart = m_pcPosition->GetReading().Position;
+
+    /* Calculate ray end */
+    /* The reading is in cm, rescaled to meters */
+    rayEnd.Set(readings[i] / 100.0, 0.0, 0.0);
+    /* Rotate it around Z */
+    rayEnd.RotateZ(rob_z_rot +m_cAngleOffsets[i]);
+    /* Translation */
+    rayEnd += rayStart;
+
+    /* insert end point into point cloud */
+    m_localScan.push_back(rayEnd.GetX(), rayEnd.GetY(), rayEnd.GetZ());
+  }
 }
 
 /****************************************/

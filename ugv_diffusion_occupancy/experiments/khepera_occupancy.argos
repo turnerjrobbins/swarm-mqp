@@ -5,11 +5,17 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <system threads="0" />
-    <experiment length="600"
+    <system threads="4" />
+    <experiment length="1200"
                 ticks_per_second="10"
-                random_seed="124" />
+                random_seed="56" />
   </framework>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <loop_functions library=""
+                  label="octomap_manager" />
 
   <!-- *************** -->
   <!-- * Controllers * -->
@@ -25,7 +31,7 @@
         <positioning implementation="default" />
 
         <kheperaiv_proximity implementation="default" show_rays="false" />
-        <kheperaiv_lidar implementation="default" show_rays="true" num_readings="10"/>
+        <kheperaiv_lidar implementation="default" show_rays="true" num_readings="25"/>
       </sensors>
       <params alpha="7.5" delta="0.1" velocity="5" />
     </kheperaiv_occupancy_controller>
@@ -62,7 +68,7 @@
     <distribute>
       <position method="uniform" min="-2,-2,0" max="2,2,0" />
       <orientation method="gaussian" mean="0,0,0" std_dev="360,0,0" />
-      <entity quantity="1" max_trials="100">
+      <entity quantity="10" max_trials="100">
         <kheperaiv id="khiv">
           <controller config="khivdc" />
         </kheperaiv>

@@ -4,6 +4,8 @@ set(HEADERS
 set(SOURCES
   occupancy_visualizer.cpp)
 
+include_directories(../../../build)
+
 add_library(occupancy_visualizer SHARED ${HEADERS} ${SOURCES})
 
 target_link_libraries(occupancy_visualizer

@@ -17,6 +17,7 @@
 /*octomap includes for OcTree & various octomap functions*/
 #include <octomap/octomap.h>
 #include <octomap/OcTree.h>
+#include <octomap/Pointcloud.h>
 
 //DEFINITIONS
 using namespace argos;
@@ -60,7 +61,14 @@ public:
     * completeness.
     */
   virtual void Destroy() {
-    m_localMap.writeBinary("simple_tree.bt");
+  }
+
+  virtual octomap::Pointcloud &getLocalScan() { 
+    return m_localScan;
+  }
+
+  virtual void clearLocalScan() {
+    m_localScan.clear();
   }
 
 
@@ -105,6 +113,9 @@ private:
    /* current position */
    CCI_PositioningSensor::SReading m_position;
 
+   std::vector<CRadians> m_cAngleOffsets;
+
+   octomap::Pointcloud m_localScan;
 
 };
 #endif
