@@ -1,5 +1,6 @@
 #ifndef OCTOMAP_MANAGER_H
 #define OCTOMAP_MANAGER_H
+
 #include <argos3/core/simulator/loop_functions.h>
 #include <argos3/plugins/robots/kheperaiv/simulator/kheperaiv_entity.h>
 #include <argos3/core/simulator/space/space.h>

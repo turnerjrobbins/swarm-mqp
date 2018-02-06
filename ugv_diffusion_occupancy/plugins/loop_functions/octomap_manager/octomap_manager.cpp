@@ -1,8 +1,8 @@
-#include <plugins/controllers/kheperaiv_occupancy/kheperaiv_occupancy_controller.h>
-
 #include <argos3/core/utility/datatypes/any.h>
 
 #include <argos3/plugins/robots/kheperaiv/simulator/kheperaiv_entity.h>
+
+#include "plugins/controllers/kheperaiv_occupancy/kheperaiv_occupancy_controller.h"
 
 #include "octomap_manager.h"
 
