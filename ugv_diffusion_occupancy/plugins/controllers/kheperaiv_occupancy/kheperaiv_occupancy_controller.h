@@ -5,8 +5,13 @@
 #include <argos3/core/control_interface/ci_controller.h>
 /* Definition of the differential steering actuator */
 #include <argos3/plugins/robots/generic/control_interface/ci_differential_steering_actuator.h>
-/* Definition of the interface for the thing the lidar sensor implements */
-#include <argos3/plugins/robots/kheperaiv/control_interface/ci_kheperaiv_lidar_sensor.h>
+
+/* Definition of ultrasound implementation */
+#include <argos3/plugins/robots/kheperaiv/simulator/kheperaiv_ultrasound_default_sensor.h>
+
+/* Definition of ultrasound interface */
+#include <argos3/plugins/robots/kheperaiv/control_interface/ci_kheperaiv_ultrasound_sensor.h>
+
 /* Definition of interface for occupancy actuator */
 #include <ci_occupancy_actuator.h>
 /* Definition of the control interface for the position sensor and sreading */
@@ -75,7 +80,7 @@ public:
 //Define private members
 private:
 	/* pointer to the lidar sensor	*/
-	CCI_KheperaIVLIDARSensor* pcLidarSensor;
+	CCI_KheperaIVUltrasoundSensor* m_pcUltrasoundSensor;
 	/* pointer to the differential steering actuator */
 	CCI_DifferentialSteeringActuator* m_pcWheels;
 	/* pointer to the occupancy actuator */

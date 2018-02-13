@@ -4,27 +4,27 @@
 #include <argos3/core/utility/configuration/argos_configuration.h>
 /* 2D vector definition */
 #include <argos3/core/utility/math/vector2.h>
-
+/* Definition of ultrasound implementation */
+#include <argos3/plugins/robots/kheperaiv/simulator/kheperaiv_ultrasound_default_sensor.h>
+/* Definition of ultrasound interface */
+#include <argos3/plugins/robots/kheperaiv/control_interface/ci_kheperaiv_ultrasound_sensor.h>
+/**/
 #include <argos3/core/utility/logging/argos_log.h>
-
-#include <argos3/plugins/robots/kheperaiv/simulator/kheperaiv_lidar_default_sensor.h>
-
-#include <argos3/plugins/robots/kheperaiv/control_interface/ci_kheperaiv_lidar_sensor.h>
-
 #include <argos3/plugins/robots/kheperaiv/simulator/kheperaiv_measures.h>
-
 #include <math.h>
-
 #include <argos3/core/control_interface/ci_sensor.h>
 
-typedef std::vector<Real> TReadings;
+#include <argos3/core/control_interface/ci_sensor.h>
+#include <argos3/core/utility/math/angles.h>
 
+typedef CCI_KheperaIVUltrasoundSensor::TReadings TReadings;
+typedef struct CCI_KheperaIVUltrasoundSensor::SReading SReading;
 /****************************************/
 /****************************************/
 
 CKheperaOccupancy::CKheperaOccupancy() :
    m_pcWheels(NULL),
-   pcLidarSensor(NULL),
+   m_pcUltrasoundSensor(NULL),
    pcOccupancy(NULL),
    m_cAlpha(10.0f),
    m_fDelta(0.5f),
@@ -61,7 +61,7 @@ void CKheperaOccupancy::Init(TConfigurationNode& t_node) {
     * occurs.
     */
    m_pcWheels    = GetActuator<CCI_DifferentialSteeringActuator >("differential_steering");
-   pcLidarSensor = GetSensor  <CCI_KheperaIVLIDARSensor         >("kheperaiv_lidar"  );
+   m_pcUltrasoundSensor = GetSensor  <CCI_KheperaIVUltrasoundSensor         >("kheperaiv_ultrasound"  );
    pcOccupancy   = GetActuator<CCI_OccupancyActuator            >("occupancy");
    m_pcProximity = GetSensor  <CCI_KheperaIVProximitySensor     >("kheperaiv_proximity" );
    m_pcPosition  = GetSensor  <CCI_PositioningSensor            >("positioning");
@@ -77,7 +77,8 @@ void CKheperaOccupancy::Init(TConfigurationNode& t_node) {
    m_cGoStraightAngleRange.Set(-ToRadians(m_cAlpha), ToRadians(m_cAlpha));
    GetNodeAttributeOrDefault(t_node, "delta", m_fDelta, m_fDelta);
    GetNodeAttributeOrDefault(t_node, "velocity", m_fWheelVelocity, m_fWheelVelocity);
-  const TReadings& readings = pcLidarSensor->GetReadings();
+  
+  const TReadings& readings = m_pcUltrasoundSensor->GetReadings();
   CRadians deltaAngle = KHEPERAIV_LIDAR_ANGLE_SPAN / readings.size();
   for(size_t i = 0; i < readings.size(); ++i) {
     /*push angle onto vector*/
@@ -118,6 +119,7 @@ void CKheperaOccupancy::ControlStep() {
       m_pcWheels->SetLinearVelocity(0.0f, m_fWheelVelocity);
     }
   }
+
   /**************************************/
   /***********PointCloud*****************/
   /**************************************/
@@ -126,7 +128,7 @@ void CKheperaOccupancy::ControlStep() {
   CRadians rob_z_rot, y, x;
   m_pcPosition->GetReading().Orientation.ToEulerAngles(rob_z_rot, y, x);
   /* Get readings from lidar */
-  const TReadings& readings = pcLidarSensor->GetReadings();
+  const TReadings& readings = m_pcUltrasoundSensor->GetReadings();
   /* Ray start at (0,0,0) */
   CVector3 rayStart, rayEnd;
   /* How much to rotate rayEnd at each iteration */
@@ -138,9 +140,9 @@ void CKheperaOccupancy::ControlStep() {
 
     /* Calculate ray end */
     /* The reading is in cm, rescaled to meters */
-    rayEnd.Set(readings[i] / 100.0, 0.0, 0.0);
+    rayEnd.Set(readings[i].Value, 0.0, 0.0);
     /* Rotate it around Z */
-    rayEnd.RotateZ(rob_z_rot +m_cAngleOffsets[i]);
+    rayEnd.RotateZ(rob_z_rot + readings[i].Angle);
     /* Translation */
     rayEnd += rayStart;
 
