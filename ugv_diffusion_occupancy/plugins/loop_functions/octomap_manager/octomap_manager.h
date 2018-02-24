@@ -8,6 +8,7 @@
 #include <octomap/octomap.h>
 #include <octomap/OcTree.h>
 
+#define OCTCELLSIZE 0.04
 
 using namespace argos;
 using namespace octomap;
@@ -15,7 +16,7 @@ using namespace octomap;
 class CLoopOctomapManager : public CLoopFunctions {
 public:
 	//Constructor
-	CLoopOctomapManager() : CLoopFunctions(), m_OcMap(OcTree(0.01)) {} //Argument is resolution?
+	CLoopOctomapManager() : CLoopFunctions(), m_OcMap(OcTree(OCTCELLSIZE)) {} //Argument is resolution?
 
 	//Destructor
 	~CLoopOctomapManager() {}

@@ -1,5 +1,6 @@
 /* Include the controller definition */
 #include "kheperaiv_occupancy_controller.h"
+#include <octomap_manager.h>
 /* Function definitions for XML parsing */
 #include <argos3/core/utility/configuration/argos_configuration.h>
 /* 2D vector definition */
@@ -17,6 +18,8 @@
 #include <argos3/core/control_interface/ci_sensor.h>
 #include <argos3/core/utility/math/angles.h>
 
+
+
 typedef CCI_KheperaIVUltrasoundSensor::TReadings TReadings;
 typedef struct CCI_KheperaIVUltrasoundSensor::SReading SReading;
 /****************************************/
@@ -31,7 +34,7 @@ CKheperaOccupancy::CKheperaOccupancy() :
    m_fWheelVelocity(2.5f),
    m_cGoStraightAngleRange(-ToRadians(m_cAlpha),
                            ToRadians(m_cAlpha)),
-   m_localMap(octomap::OcTree(0.01)),
+   m_localMap(octomap::OcTree(OCTCELLSIZE)),
    m_localScan(octomap::Pointcloud()){}
 
 /****************************************/
@@ -77,13 +80,6 @@ void CKheperaOccupancy::Init(TConfigurationNode& t_node) {
    m_cGoStraightAngleRange.Set(-ToRadians(m_cAlpha), ToRadians(m_cAlpha));
    GetNodeAttributeOrDefault(t_node, "delta", m_fDelta, m_fDelta);
    GetNodeAttributeOrDefault(t_node, "velocity", m_fWheelVelocity, m_fWheelVelocity);
-  
-  const TReadings& readings = m_pcUltrasoundSensor->GetReadings();
-  CRadians deltaAngle = KHEPERAIV_LIDAR_ANGLE_SPAN / readings.size();
-  for(size_t i = 0; i < readings.size(); ++i) {
-    /*push angle onto vector*/
-    m_cAngleOffsets.push_back(-KHEPERAIV_LIDAR_ANGLE_SPAN * 0.5 + i * deltaAngle);
-  }
 }
 
 /****************************************/
@@ -131,24 +127,19 @@ void CKheperaOccupancy::ControlStep() {
   const TReadings& readings = m_pcUltrasoundSensor->GetReadings();
   /* Ray start at (0,0,0) */
   CVector3 rayStart, rayEnd;
-  /* How much to rotate rayEnd at each iteration */
-  CRadians deltaAngle = KHEPERAIV_LIDAR_ANGLE_SPAN / readings.size();
+  rayStart = m_pcPosition->GetReading().Position;
+  /* Calculate ray end */
+  /* The reading is in cm, rescaled to meters */
+  rayEnd.Set(KHEPERAIV_ULTRASOUND_SENSORS_RING_RADIUS +
+    readings[0].Value * (KHEPERAIV_ULTRASOUND_SENSORS_RING_RANGE.GetMax() - KHEPERAIV_ULTRASOUND_SENSORS_RING_RANGE.GetMin()),
+     0.0, 0.0);
+  /* Rotate it around Z */
+  rayEnd.RotateZ(rob_z_rot);
+  /* Translation */
+  rayEnd += rayStart;
 
-  /* For each reading, update the octomap */
-  for(size_t i = 0; i < readings.size(); ++i) {
-    rayStart = m_pcPosition->GetReading().Position;
-
-    /* Calculate ray end */
-    /* The reading is in cm, rescaled to meters */
-    rayEnd.Set(readings[i].Value, 0.0, 0.0);
-    /* Rotate it around Z */
-    rayEnd.RotateZ(rob_z_rot + readings[i].Angle);
-    /* Translation */
-    rayEnd += rayStart;
-
-    /* insert end point into point cloud */
-    m_localScan.push_back(rayEnd.GetX(), rayEnd.GetY(), rayEnd.GetZ());
-  }
+  /* insert end point into point cloud */
+  m_localScan.push_back(rayEnd.GetX(), rayEnd.GetY(), rayEnd.GetZ());
 }
 
 /****************************************/

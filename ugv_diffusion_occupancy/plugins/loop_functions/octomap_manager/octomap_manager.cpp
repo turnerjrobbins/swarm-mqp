@@ -2,17 +2,19 @@
 
 #include <argos3/plugins/robots/kheperaiv/simulator/kheperaiv_entity.h>
 
+#include <argos3/plugins/robots/kheperaiv/simulator/kheperaiv_measures.h>
+
 #include "plugins/controllers/kheperaiv_occupancy/kheperaiv_occupancy_controller.h"
 
 #include "octomap_manager.h"
 
 void CLoopOctomapManager::Init (TConfigurationNode& t_tree) {
 	m_KheperaMap = GetSpace().GetEntitiesByType("kheperaiv");
-	m_OcMap.setClampingThresMin(.15);
-	m_OcMap.setClampingThresMax(.85);
-	m_OcMap.setProbHit(.6);
-	m_OcMap.setProbMiss(.35);
-	m_OcMap.setOccupancyThres(0.5);
+	m_OcMap.setClampingThresMin(.1);
+	m_OcMap.setClampingThresMax(.9);
+	m_OcMap.setProbHit(.7);
+	m_OcMap.setProbMiss(.3);
+	//m_OcMap.setOccupancyThres(0.5);
 
 }
 
@@ -38,7 +40,14 @@ void CLoopOctomapManager::PostStep() {
 	}
 	/* go through robot locations and clear them on the map */
 	for(octomap::point3d pos : robots) {
-		;
+		for(Real i = 0.0; i < KHEPERAIV_BASE_RADIUS * 1.1; i += OCTCELLSIZE) {
+			for(Real j = 0.0; j < KHEPERAIV_BASE_RADIUS * 1.1; j += OCTCELLSIZE) {
+				point3d pos (i, j,  KHEPERAIV_ULTRASOUND_SENSORS_RING_ELEVATION);
+				point3d neg (-i, -j, KHEPERAIV_ULTRASOUND_SENSORS_RING_ELEVATION);
+        		m_OcMap.updateNode(pos, false);  // integrate 'free' measurement
+        		m_OcMap.updateNode(neg, false);
+			}
+		}
 	}
 }
 

@@ -55,6 +55,8 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(plugins/robots/generic/control_interface/)
+include_directories(plugins/loop_functions/)
+include_directories(plugins/controllers/)
 
 add_subdirectory(plugins)
 

@@ -1,4 +1,9 @@
-add_library(kheperaiv_occupancy SHARED kheperaiv_occupancy_controller.h kheperaiv_occupancy_controller.cpp)
+include_directories(${PROJECT_SOURCE_DIR}/plugins/loop_functions/octomap_manager/)
+set(HEADERS ${PROJECT_SOURCE_DIR}/plugins/loop_functions/octomap_manager/octomap_manager.h)
+
+add_library(kheperaiv_occupancy SHARED kheperaiv_occupancy_controller.h kheperaiv_occupancy_controller.cpp ${HEADERS})
+
+
 target_link_libraries(kheperaiv_occupancy
   argos3core_simulator
   argos3plugin_simulator_epuck
