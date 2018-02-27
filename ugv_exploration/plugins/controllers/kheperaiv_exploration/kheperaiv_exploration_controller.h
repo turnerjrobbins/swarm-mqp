@@ -24,6 +24,11 @@
 
 //DEFINITIONS
 using namespace argos;
+enum class UGV_State {
+    SCAN,
+    WALK,
+    UPDATE
+};
 
 class CKheperaExploration : public CCI_Controller {
 //Define public members
@@ -116,5 +121,7 @@ private:
   std::vector<CRadians> m_cAngleOffsets;
 
   octomap::Pointcloud m_localScan;
+
+  UGV_State m_state;
 };
 #endif

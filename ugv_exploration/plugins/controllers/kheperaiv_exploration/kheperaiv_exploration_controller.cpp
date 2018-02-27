@@ -34,7 +34,8 @@ CKheperaExploration::CKheperaExploration() :
   m_cGoStraightAngleRange(-ToRadians(m_cAlpha),
                          ToRadians(m_cAlpha)),
   m_localMap(octomap::OcTree(OCTCELLSIZE)),
-  m_localScan(octomap::Pointcloud()){}
+  m_localScan(octomap::Pointcloud()),
+  m_state(UGV_State::SCAN){}
 
 /****************************************/
 /****************************************/
@@ -55,7 +56,12 @@ void CKheperaExploration::Init(TConfigurationNode& t_node) {
 /****************************************/
 
 void CKheperaExploration::ControlStep() {
-  
+  switch(m_state) {
+    case UGV_State::SCAN:
+      break;
+    default:
+      break;
+  }
 }
 
 /****************************************/
