@@ -1,0 +1,2 @@
+#add_subdirectory(occupancy_visualizer)
+add_subdirectory(octomap_manager)
