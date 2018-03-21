@@ -1,8 +1,11 @@
-#-----------------------#
-#			#
-#	gridMerge	#
-#			#
-#-----------------------#
+		#-----------------------#
+		#			#
+		#	gridMerge	#
+		#			#
+		#-----------------------#
+
+#####-----Created in Python 2 by Mathew Schwartzman-----######
+
 
 Transformation class stores an array x and a scalar delta of the transformed array from the compared array
 

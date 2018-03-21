@@ -262,7 +262,7 @@ def shake(matrix1, matrix2, sensitivity):
 	return result
 
 def shimmy(matrix1, matrix2, sensitivity):
-	tilt = 1
+	tilt = 4
 	listoftransformations = createRotList(matrix1, matrix2, tilt)
 	result = findOptRotation(listoftransformations)
 
@@ -288,16 +288,16 @@ def actuator(fixed, flux, targDelta):
 	return var
 
 f = generalTranslateY(6,(rotateCW(45, e, 10,10)))
-g = rotateCCW(10, e, 10, 10)
+g = rotateCCW(20, e, 10, 10)
 
 stationary = d
-original = g #rotateCCW(10, generalTranslateY(6,generalTranslateX(6,e)),10,10)
-transformed = actuator(stationary, original, 13)
+original = f #rotateCCW(10, generalTranslateY(6,generalTranslateX(6,e)),10,10)
+transformed = actuator(stationary, original, 12)
 
 plt.figure(figsize=(6,3.2))
 plt.imshow(d)
-# plt.figure(figsize=(6,3.2))
-# plt.imshow(original)
+plt.figure(figsize=(6,3.2))
+plt.imshow(original)
 plt.figure(figsize=(6,3.2))
 plt.imshow(transformed)
 plt.colorbar(orientation='vertical')
